@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -16,6 +16,12 @@
 		CE9F6188236FF5B800F1990A /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE9F6187236FF5B800F1990A /* Extensions.swift */; };
 		CEA438182373D52900CBD8E7 /* SignUpVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEA438172373D52900CBD8E7 /* SignUpVC.swift */; };
 		CEA4381A2373FD1800CBD8E7 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CEA438192373FD1800CBD8E7 /* GoogleService-Info.plist */; };
+		CEF596392383B77E0093491F /* MainTabVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF596382383B77E0093491F /* MainTabVC.swift */; };
+		CEF5963B2383BBB60093491F /* FeedVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF5963A2383BBB60093491F /* FeedVC.swift */; };
+		CEF5963D2383BBD90093491F /* SearchVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF5963C2383BBD90093491F /* SearchVC.swift */; };
+		CEF5963F2383BBF70093491F /* UploadPostVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF5963E2383BBF70093491F /* UploadPostVC.swift */; };
+		CEF596412383BC190093491F /* NotificationVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF596402383BC190093491F /* NotificationVC.swift */; };
+		CEF596432383BC2E0093491F /* UserProfileVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF596422383BC2E0093491F /* UserProfileVC.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,6 +37,12 @@
 		CE9F6187236FF5B800F1990A /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		CEA438172373D52900CBD8E7 /* SignUpVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpVC.swift; sourceTree = "<group>"; };
 		CEA438192373FD1800CBD8E7 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		CEF596382383B77E0093491F /* MainTabVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabVC.swift; sourceTree = "<group>"; };
+		CEF5963A2383BBB60093491F /* FeedVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedVC.swift; sourceTree = "<group>"; };
+		CEF5963C2383BBD90093491F /* SearchVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchVC.swift; sourceTree = "<group>"; };
+		CEF5963E2383BBF70093491F /* UploadPostVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadPostVC.swift; sourceTree = "<group>"; };
+		CEF596402383BC190093491F /* NotificationVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationVC.swift; sourceTree = "<group>"; };
+		CEF596422383BC2E0093491F /* UserProfileVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileVC.swift; sourceTree = "<group>"; };
 		EBCCFC03EF89F9C44222A448 /* Pods-InstagramCopy.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-InstagramCopy.release.xcconfig"; path = "Target Support Files/Pods-InstagramCopy/Pods-InstagramCopy.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -52,7 +64,6 @@
 				8142BFA4B418682E04D69D5A /* Pods-InstagramCopy.debug.xcconfig */,
 				EBCCFC03EF89F9C44222A448 /* Pods-InstagramCopy.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -102,8 +113,13 @@
 		CE9F6181236FF3E400F1990A /* Controller */ = {
 			isa = PBXGroup;
 			children = (
-				CE9F6184236FF42A00F1990A /* LoginVC.swift */,
-				CEA438172373D52900CBD8E7 /* SignUpVC.swift */,
+				CEF596452383D1380093491F /* Feed */,
+				CEF596442383D1150093491F /* Login */,
+				CEF596482383D16E0093491F /* Notifications */,
+				CEF596462383D1470093491F /* Search */,
+				CEF596472383D15A0093491F /* UploadPost */,
+				CEF596492383D18A0093491F /* UserProfile */,
+				CEF596382383B77E0093491F /* MainTabVC.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -128,6 +144,55 @@
 				CE9F6187236FF5B800F1990A /* Extensions.swift */,
 			);
 			path = Utils;
+			sourceTree = "<group>";
+		};
+		CEF596442383D1150093491F /* Login */ = {
+			isa = PBXGroup;
+			children = (
+				CEA438172373D52900CBD8E7 /* SignUpVC.swift */,
+				CE9F6184236FF42A00F1990A /* LoginVC.swift */,
+			);
+			path = Login;
+			sourceTree = "<group>";
+		};
+		CEF596452383D1380093491F /* Feed */ = {
+			isa = PBXGroup;
+			children = (
+				CEF5963A2383BBB60093491F /* FeedVC.swift */,
+			);
+			path = Feed;
+			sourceTree = "<group>";
+		};
+		CEF596462383D1470093491F /* Search */ = {
+			isa = PBXGroup;
+			children = (
+				CEF5963C2383BBD90093491F /* SearchVC.swift */,
+			);
+			path = Search;
+			sourceTree = "<group>";
+		};
+		CEF596472383D15A0093491F /* UploadPost */ = {
+			isa = PBXGroup;
+			children = (
+				CEF5963E2383BBF70093491F /* UploadPostVC.swift */,
+			);
+			path = UploadPost;
+			sourceTree = "<group>";
+		};
+		CEF596482383D16E0093491F /* Notifications */ = {
+			isa = PBXGroup;
+			children = (
+				CEF596402383BC190093491F /* NotificationVC.swift */,
+			);
+			path = Notifications;
+			sourceTree = "<group>";
+		};
+		CEF596492383D18A0093491F /* UserProfile */ = {
+			isa = PBXGroup;
+			children = (
+				CEF596422383BC2E0093491F /* UserProfileVC.swift */,
+			);
+			path = UserProfile;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -245,10 +310,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CEF5963B2383BBB60093491F /* FeedVC.swift in Sources */,
+				CEF596412383BC190093491F /* NotificationVC.swift in Sources */,
+				CEF5963F2383BBF70093491F /* UploadPostVC.swift in Sources */,
+				CEF596432383BC2E0093491F /* UserProfileVC.swift in Sources */,
 				CEA438182373D52900CBD8E7 /* SignUpVC.swift in Sources */,
 				CE9F6185236FF42A00F1990A /* LoginVC.swift in Sources */,
 				CE9F6188236FF5B800F1990A /* Extensions.swift in Sources */,
+				CEF596392383B77E0093491F /* MainTabVC.swift in Sources */,
 				CE9F616E236FF18300F1990A /* AppDelegate.swift in Sources */,
+				CEF5963D2383BBD90093491F /* SearchVC.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

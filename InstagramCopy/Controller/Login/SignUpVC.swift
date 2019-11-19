@@ -18,7 +18,7 @@ class SignUpVC: UIViewController {
     
     let profilePhotoBtn: UIButton = {
        let btn = UIButton(type: .system)
-        btn.setImage(UIImage(named: "plus_photo"), for: .normal)
+        btn.setImage(#imageLiteral(resourceName: "plus_photo"), for: .normal)
         btn.addTarget(self, action: #selector(handlSelectProfilePhoto), for: .touchUpInside)
         return btn
     }()
@@ -29,6 +29,7 @@ class SignUpVC: UIViewController {
         tf.backgroundColor = UIColor(white: 0, alpha: 0.03)
         tf.borderStyle = .roundedRect
         tf.font = UIFont.systemFont(ofSize: 14)
+        tf.autocorrectionType = .no
         tf.addTarget(self, action: #selector(formValidation), for: .editingChanged)
         return tf
     }()
@@ -50,6 +51,7 @@ class SignUpVC: UIViewController {
         tf.backgroundColor = UIColor(white: 0, alpha: 0.03)
         tf.borderStyle = .roundedRect
         tf.font = UIFont.systemFont(ofSize: 14)
+        tf.autocorrectionType = .no
         tf.addTarget(self, action: #selector(formValidation), for: .editingChanged)
         return tf
     }()
@@ -60,6 +62,7 @@ class SignUpVC: UIViewController {
         tf.backgroundColor = UIColor(white: 0, alpha: 0.03)
         tf.borderStyle = .roundedRect
         tf.font = UIFont.systemFont(ofSize: 14)
+        tf.autocorrectionType = .no
         tf.addTarget(self, action: #selector(formValidation), for: .editingChanged)
         return tf
     }()
@@ -102,10 +105,13 @@ class SignUpVC: UIViewController {
         view.addSubview(alreadyHaveAccountButton)
         alreadyHaveAccountButton.anchor(top: nil, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 20, paddingBottom: 10, paddingRight: 20, width: 0, height: 80)
     }
-    // MARK: - Function
+    // MARK: - Handlers
     @objc func handleSignUp() {
+        // properties
         guard let email = emailTextField.text else { return }
         guard let password = passwordTextField.text else { return }
+        guard let fullName = fullNameTextField.text else { return }
+        guard let userName = userNameTextField.text else { return }
         
         Auth.auth().createUser(withEmail: email, password: password) { (user, error) in
             //handle error
@@ -113,8 +119,36 @@ class SignUpVC: UIViewController {
                 print("Failed to create user", error.localizedDescription)
             }
             
-            //success
-            print("Successfully create user with firebase")
+            // upload profile image
+            guard let profileImg = self.profilePhotoBtn.imageView?.image else { return }
+            guard let uploadData =  profileImg.jpegData(compressionQuality: 0.3) else { return }
+            let fileName = NSUUID().uuidString
+            Storage.storage().reference().child("profile_image").child(fileName).putData(uploadData, metadata: nil, completion: { (metadata, error) in
+                // handle error
+                if let error = error {
+                    print("Failed to upload image to Firebase Storage with error", error.localizedDescription)
+                }
+                
+                // profile image url
+                Storage.storage().reference().child("profile_image").child(fileName).downloadURL(completion: { (url, error) in
+                    if let error = error {
+                        print("failed to get image url", error.localizedDescription)
+                        return
+                    }
+                    
+                    if let url = url?.absoluteString {
+                        let dictionaryValues = ["name": fullName,
+                                                "username": userName,
+                                                "profileImageUrl": url]
+                        
+                        let values = [user?.user.uid: dictionaryValues]
+                        // save user info to database
+                        Database.database().reference().child("users").updateChildValues(values, withCompletionBlock: { (error, ref) in
+                            print("successfully created user...")
+                        })
+                    }
+                })
+            })
         }
     }
 

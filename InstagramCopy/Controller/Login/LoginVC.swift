@@ -6,13 +6,14 @@
 //
 
 import UIKit
+import Firebase
 
 class LoginVC: UIViewController {
     // MARK: - Properties
     let logoContainerView: UIView = {
         let view = UIView()
         
-        let logoImageView = UIImageView(image: UIImage(named: "Instagram_logo_white"))
+        let logoImageView = UIImageView(image: #imageLiteral(resourceName: "Instagram_logo_white"))
         logoImageView.contentMode = .scaleAspectFill
         view.addSubview(logoImageView)
         logoImageView.anchor(top: nil, left: nil, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 200, height: 50)
@@ -31,6 +32,8 @@ class LoginVC: UIViewController {
         tf.backgroundColor = UIColor(white: 0, alpha: 0.03)
         tf.borderStyle = .roundedRect
         tf.font = UIFont.systemFont(ofSize: 14)
+        tf.autocorrectionType = .no
+        tf.addTarget(self, action: #selector(formValidation), for: .editingChanged)
         return tf
     }()
     
@@ -40,6 +43,8 @@ class LoginVC: UIViewController {
         tf.backgroundColor = UIColor(white: 0, alpha: 0.03)
         tf.borderStyle = .roundedRect
         tf.font = UIFont.systemFont(ofSize: 14)
+        tf.isSecureTextEntry = true
+        tf.addTarget(self, action: #selector(formValidation), for: .editingChanged)
         return tf
     }()
     
@@ -49,6 +54,8 @@ class LoginVC: UIViewController {
         btn.setTitleColor(.white, for: .normal)
         btn.backgroundColor = UIColor(red: 149/255, green: 204/255, blue: 244/255, alpha: 1)
         btn.layer.cornerRadius = 5
+        btn.isEnabled = false
+        btn.addTarget(self, action: #selector(handleLogIn), for: .touchUpInside)
         return btn
     }()
 
@@ -78,10 +85,42 @@ class LoginVC: UIViewController {
         dontHaveAccountButton.anchor(top: nil, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 20, paddingBottom: 10, paddingRight: 20, width: 0, height: 80)
         
     }
-    // MARK: - Function
+    // MARK: - Handlers
     @objc func handleShowSignUp() {
         let vc = SignUpVC()
         navigationController?.pushViewController(vc, animated: true)
+    }
+    @objc func handleLogIn() {
+        guard
+            let email = emailTextField.text,
+            let pass = passwordTextField.text else { return }
+        // sign user in
+        Auth.auth().signIn(withEmail: email, password: pass) { (user, error) in
+            if let error = error {
+                print("Unable to sign in...", error.localizedDescription)
+                return
+            }
+            
+            // handle success
+            print("success...")
+            
+            guard let mainTabVC = UIApplication.shared.keyWindow?.rootViewController as? MainTabVC else { return }
+            // configure view controllers in mainTabVC
+            mainTabVC.configureViewControllers()
+            // dismiss login controller
+            self.dismiss(animated: true, completion: nil)
+        }
+    }
+    @objc func formValidation() {
+        guard
+            emailTextField.hasText,
+            passwordTextField.hasText else {
+                loginButton.backgroundColor = UIColor(red: 149/255, green: 204/255, blue: 244/255, alpha: 1)
+                loginButton.isEnabled = false
+                return
+        }
+        loginButton.isEnabled = true
+        loginButton.backgroundColor = UIColor(red: 17/255, green: 154/255, blue: 237/255, alpha: 1)
     }
 
     func configureViewComponets() {

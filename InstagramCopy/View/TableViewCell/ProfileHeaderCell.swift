@@ -214,7 +214,7 @@ class ProfileHeaderCell: UICollectionViewCell {
         configureUserStats()
         
         addSubview(editProfileFollowButton)
-        editProfileFollowButton.anchor(top: postLabel.bottomAnchor, left: postLabel.leftAnchor, bottom: nil, right: followingLabel.rightAnchor, paddingTop: 10, paddingLeft: 10, paddingBottom: 0, paddingRight: 10, width: 0, height: 0)
+        editProfileFollowButton.anchor(top: postLabel.bottomAnchor, left: postLabel.leftAnchor, bottom: nil, right: followingLabel.rightAnchor, paddingTop: 10, paddingLeft: 10, paddingBottom: 0, paddingRight: 10, width: 0, height: 35)
         editProfileFollowButton.addTarget(self, action: #selector(handleEditProfileFollowButton), for: .touchUpInside)
         
         configureBottomToolBar()

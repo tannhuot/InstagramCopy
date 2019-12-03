@@ -21,7 +21,7 @@ class UserProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLay
         collectionView.backgroundColor = .white
 
         // Register cell classes
-        self.collectionView!.register(ProfileHeaderCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: ProfileHeaderReuseIdentifier)
+//        self.collectionView!.register(ProfileHeaderCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: ProfileHeaderReuseIdentifier)
 
     }
     

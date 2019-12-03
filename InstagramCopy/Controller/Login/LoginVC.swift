@@ -33,6 +33,7 @@ class LoginVC: UIViewController {
         tf.borderStyle = .roundedRect
         tf.font = UIFont.systemFont(ofSize: 14)
         tf.autocorrectionType = .no
+        tf.autocapitalizationType = .none
         tf.addTarget(self, action: #selector(formValidation), for: .editingChanged)
         return tf
     }()

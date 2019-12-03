@@ -6,38 +6,50 @@
 //
 
 import UIKit
+import Firebase
 
 private let reuseIdentifier = "Cell"
+private let ProfileHeaderReuseIdentifier = "ProfileHeaderCell"
 
-class UserProfileVC: UICollectionViewController {
+class UserProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLayout {
+    // MARK: - Properties
+    var user: User?
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
+        self.view.backgroundColor = .white
+        collectionView.backgroundColor = .white
 
         // Register cell classes
-        self.collectionView!.register(UICollectionViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
+        self.collectionView!.register(ProfileHeaderCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: ProfileHeaderReuseIdentifier)
 
-        // Do any additional setup after loading the view.
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        if user == nil {
+            fetchCurrentUserData()
+        }else{
+            navigationItem.title = user?.name
+        }
     }
 
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using [segue destinationViewController].
-        // Pass the selected object to the new view controller.
-    }
-    */
-
-    // MARK: UICollectionViewDataSource
+    // MARK: - UICollectionView
 
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
-        return 0
+        return 1
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: ProfileHeaderReuseIdentifier, for: indexPath) as! ProfileHeaderCell
+        // set user in header
+        header.user = user
+        // set delegate
+        header.delegage = self
+        return header
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+        return CGSize(width: view.frame.width, height: 200)
     }
 
 
@@ -48,41 +60,56 @@ class UserProfileVC: UICollectionViewController {
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath)
-    
+        
         // Configure the cell
     
         return cell
     }
-
-    // MARK: UICollectionViewDelegate
-
-    /*
-    // Uncomment this method to specify if the specified item should be highlighted during tracking
-    override func collectionView(_ collectionView: UICollectionView, shouldHighlightItemAt indexPath: IndexPath) -> Bool {
-        return true
+    //MARK: - API
+    func fetchCurrentUserData() {
+        guard let currentUid = Auth.auth().currentUser?.uid else { return }
+        collectionView.isHidden = true
+        showProgressIndicator(view: self.view, title: "Wait...")
+        Database.database().reference().child("users").child(currentUid).observeSingleEvent(of: .value) { (snapshot) in
+            hideProgressIndicator(view: self.view)
+            self.collectionView.isHidden = false
+            guard let dictionary = snapshot.value as? Dictionary<String, Any> else { return }
+            let uid = snapshot.key
+            let user = User(uid: uid, dictionary: dictionary)
+            
+            self.navigationItem.title = user.name
+            self.user = user
+            self.collectionView.reloadData()
+        }
     }
-    */
+}
 
-    /*
-    // Uncomment this method to specify if the specified item should be selected
-    override func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
-        return true
+extension UserProfileVC: UserProfileHeaderDelegate {
+    func handleFollowingTapped(for header: ProfileHeaderCell) {
+        let vc = FollowVC()
+        vc.isFromFollowing = true
+        vc.uid = user?.uid
+        navigationController?.pushViewController(vc, animated: true)
+        print("followings")
     }
-    */
-
-    /*
-    // Uncomment these methods to specify if an action menu should be displayed for the specified item, and react to actions performed on the item
-    override func collectionView(_ collectionView: UICollectionView, shouldShowMenuForItemAt indexPath: IndexPath) -> Bool {
-        return false
-    }
-
-    override func collectionView(_ collectionView: UICollectionView, canPerformAction action: Selector, forItemAt indexPath: IndexPath, withSender sender: Any?) -> Bool {
-        return false
-    }
-
-    override func collectionView(_ collectionView: UICollectionView, performAction action: Selector, forItemAt indexPath: IndexPath, withSender sender: Any?) {
     
+    func handleFollowersTapped(for header: ProfileHeaderCell) {
+        let vc = FollowVC()
+        vc.isFromFollowing = false
+        vc.uid = user?.uid
+        navigationController?.pushViewController(vc, animated: true)
+        print("followers")
     }
-    */
-
+    
+    func handleEditProfileFollowTapped(for header: ProfileHeaderCell) {
+        if header.editProfileFollowButton.titleLabel?.text?.lowercased() == "follow" {
+            header.editProfileFollowButton.setTitle("Follwing", for: .normal)
+            header.user?.follow()
+        }else if header.editProfileFollowButton.titleLabel?.text?.lowercased() == "following"{
+            header.editProfileFollowButton.setTitle("Follow", for: .normal)
+            header.user?.unfollow()
+        }else{
+            print("Edit Profile")
+        }
+    }
 }

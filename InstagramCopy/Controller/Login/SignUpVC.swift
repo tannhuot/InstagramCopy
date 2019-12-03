@@ -111,27 +111,38 @@ class SignUpVC: UIViewController {
         guard let email = emailTextField.text else { return }
         guard let password = passwordTextField.text else { return }
         guard let fullName = fullNameTextField.text else { return }
-        guard let userName = userNameTextField.text else { return }
-        
+        guard let userName = userNameTextField.text?.lowercased() else { return }
+        showProgressIndicator(view: self.view, title: "Processing...")
         Auth.auth().createUser(withEmail: email, password: password) { (user, error) in
             //handle error
             if let error = error {
+                hideProgressIndicator(view: self.view)
                 print("Failed to create user", error.localizedDescription)
             }
             
             // upload profile image
-            guard let profileImg = self.profilePhotoBtn.imageView?.image else { return }
-            guard let uploadData =  profileImg.jpegData(compressionQuality: 0.3) else { return }
+            guard let profileImg = self.profilePhotoBtn.imageView?.image else {
+                hideProgressIndicator(view: self.view)
+                return
+                
+            }
+            guard let uploadData =  profileImg.jpegData(compressionQuality: 0.3) else {
+                hideProgressIndicator(view: self.view)
+                return
+                
+            }
             let fileName = NSUUID().uuidString
             Storage.storage().reference().child("profile_image").child(fileName).putData(uploadData, metadata: nil, completion: { (metadata, error) in
                 // handle error
                 if let error = error {
+                    hideProgressIndicator(view: self.view)
                     print("Failed to upload image to Firebase Storage with error", error.localizedDescription)
                 }
                 
                 // profile image url
                 Storage.storage().reference().child("profile_image").child(fileName).downloadURL(completion: { (url, error) in
                     if let error = error {
+                        hideProgressIndicator(view: self.view)
                         print("failed to get image url", error.localizedDescription)
                         return
                     }
@@ -144,7 +155,12 @@ class SignUpVC: UIViewController {
                         let values = [user?.user.uid: dictionaryValues]
                         // save user info to database
                         Database.database().reference().child("users").updateChildValues(values, withCompletionBlock: { (error, ref) in
-                            print("successfully created user...")
+                            hideProgressIndicator(view: self.view)
+                            guard let mainTabVC = UIApplication.shared.keyWindow?.rootViewController as? MainTabVC else { return }
+                            // configure view controllers in mainTabVC
+                            mainTabVC.configureViewControllers()
+                            // dismiss login controller
+                            self.dismiss(animated: true, completion: nil)
                         })
                     }
                 })
@@ -168,7 +184,7 @@ class SignUpVC: UIViewController {
                 return
         }
         signUpButton.isEnabled = true
-        signUpButton.backgroundColor = UIColor(red: 17/255, green: 154/255, blue: 237/255, alpha: 1)
+        signUpButton.backgroundColor = .getActiveButtonColor()
     }
     
     @objc func handlSelectProfilePhoto() {

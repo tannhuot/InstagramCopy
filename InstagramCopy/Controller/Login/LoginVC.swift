@@ -95,7 +95,9 @@ class LoginVC: UIViewController {
             let email = emailTextField.text,
             let pass = passwordTextField.text else { return }
         // sign user in
+        showProgressIndicator(view: self.view, title: "Loging In...")
         Auth.auth().signIn(withEmail: email, password: pass) { (user, error) in
+        hideProgressIndicator(view: self.view)
             if let error = error {
                 print("Unable to sign in...", error.localizedDescription)
                 return
@@ -120,7 +122,7 @@ class LoginVC: UIViewController {
                 return
         }
         loginButton.isEnabled = true
-        loginButton.backgroundColor = UIColor(red: 17/255, green: 154/255, blue: 237/255, alpha: 1)
+        loginButton.backgroundColor = .getActiveButtonColor()
     }
 
     func configureViewComponets() {

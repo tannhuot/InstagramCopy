@@ -18,7 +18,6 @@ class MainTabVC: UITabBarController, UITabBarControllerDelegate {
         
         // check user validation
         checkLogin()
-        
     }
 
     func configureViewControllers() {

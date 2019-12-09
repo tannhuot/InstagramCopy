@@ -13,6 +13,7 @@ class SelectImageVC: UICollectionViewController, UICollectionViewDelegateFlowLay
     var images = [UIImage]()
     var assets = [PHAsset]()
     var selectedImage: UIImage?
+    var header: SelectPhotoHeaderCell?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -58,7 +59,7 @@ class SelectImageVC: UICollectionViewController, UICollectionViewDelegateFlowLay
                     header.photoImageView.image = image
                 }
             }
-            
+            self.header = header
             header.photoImageView.image = image
         }
         return header
@@ -91,7 +92,9 @@ class SelectImageVC: UICollectionViewController, UICollectionViewDelegateFlowLay
     }
     
     @objc func handleNext() {
-        print("handle next")
+        let vc = UploadPostVC()
+        vc.selectedImage = header?.photoImageView.image
+        self.navigationController?.pushViewController(vc, animated: true)
     }
     
     func fetchPhotos() {

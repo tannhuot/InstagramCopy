@@ -16,8 +16,12 @@
 		CE4C0EB2239635BC00CFC615 /* SelectImageVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE4C0EB1239635BC00CFC615 /* SelectImageVC.swift */; };
 		CE4C0EB42396364400CFC615 /* SelectPhotoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE4C0EB32396364400CFC615 /* SelectPhotoCell.swift */; };
 		CE4C0EB62396367C00CFC615 /* SelectPhotoHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE4C0EB52396367C00CFC615 /* SelectPhotoHeaderCell.swift */; };
+		CE76435023978FDA005E01D4 /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE76434F23978FDA005E01D4 /* Post.swift */; };
 		CE7E7B5C238E0F1200B9B35D /* ProfileUserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7E7B5B238E0F1200B9B35D /* ProfileUserCell.swift */; };
 		CE7E7B5E238E0F5C00B9B35D /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7E7B5D238E0F5C00B9B35D /* User.swift */; };
+		CE9964BD23988EA6004CD6C0 /* PostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE9964BC23988EA6004CD6C0 /* PostCell.swift */; };
+		CE9964BF2398974C004CD6C0 /* CustomImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE9964BE2398974C004CD6C0 /* CustomImageView.swift */; };
+		CE9964C123989BEC004CD6C0 /* FeedCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE9964C023989BEC004CD6C0 /* FeedCell.swift */; };
 		CE9F616E236FF18300F1990A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE9F616D236FF18300F1990A /* AppDelegate.swift */; };
 		CE9F6173236FF18300F1990A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CE9F6171236FF18300F1990A /* Main.storyboard */; };
 		CE9F6178236FF18500F1990A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CE9F6176236FF18500F1990A /* LaunchScreen.storyboard */; };
@@ -47,8 +51,12 @@
 		CE4C0EB1239635BC00CFC615 /* SelectImageVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectImageVC.swift; sourceTree = "<group>"; };
 		CE4C0EB32396364400CFC615 /* SelectPhotoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectPhotoCell.swift; sourceTree = "<group>"; };
 		CE4C0EB52396367C00CFC615 /* SelectPhotoHeaderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectPhotoHeaderCell.swift; sourceTree = "<group>"; };
+		CE76434F23978FDA005E01D4 /* Post.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
 		CE7E7B5B238E0F1200B9B35D /* ProfileUserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileUserCell.swift; sourceTree = "<group>"; };
 		CE7E7B5D238E0F5C00B9B35D /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		CE9964BC23988EA6004CD6C0 /* PostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostCell.swift; sourceTree = "<group>"; };
+		CE9964BE2398974C004CD6C0 /* CustomImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomImageView.swift; sourceTree = "<group>"; };
+		CE9964C023989BEC004CD6C0 /* FeedCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedCell.swift; sourceTree = "<group>"; };
 		CE9F616A236FF18300F1990A /* InstagramCopy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = InstagramCopy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE9F616D236FF18300F1990A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CE9F6172236FF18300F1990A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -102,7 +110,6 @@
 		CE4C0EB72396368C00CFC615 /* TableViewCell */ = {
 			isa = PBXGroup;
 			children = (
-				CE0354A723852CFA00198E50 /* ProfileHeaderCell.swift */,
 				CE7E7B5B238E0F1200B9B35D /* ProfileUserCell.swift */,
 			);
 			path = TableViewCell;
@@ -111,8 +118,11 @@
 		CE4C0EB82396369600CFC615 /* CollectionViewCell */ = {
 			isa = PBXGroup;
 			children = (
+				CE9964BC23988EA6004CD6C0 /* PostCell.swift */,
+				CE0354A723852CFA00198E50 /* ProfileHeaderCell.swift */,
 				CE4C0EB32396364400CFC615 /* SelectPhotoCell.swift */,
 				CE4C0EB52396367C00CFC615 /* SelectPhotoHeaderCell.swift */,
+				CE9964C023989BEC004CD6C0 /* FeedCell.swift */,
 			);
 			path = CollectionViewCell;
 			sourceTree = "<group>";
@@ -179,6 +189,7 @@
 			isa = PBXGroup;
 			children = (
 				CE7E7B5D238E0F5C00B9B35D /* User.swift */,
+				CE76434F23978FDA005E01D4 /* Post.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -192,6 +203,7 @@
 				CE2A2D9A23949D3800EF5DB3 /* Constants.swift */,
 				CE2A2D9C2394AA0600EF5DB3 /* ColorExtensions.swift */,
 				CE2A2D9E2394ADD900EF5DB3 /* Protocols.swift */,
+				CE9964BE2398974C004CD6C0 /* CustomImageView.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -363,6 +375,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CED4E12A238E1A3E0037C64D /* AppUtils.swift in Sources */,
+				CE9964C123989BEC004CD6C0 /* FeedCell.swift in Sources */,
 				CED4E128238E1A100037C64D /* ProgressIndicator.swift in Sources */,
 				CE7E7B5E238E0F5C00B9B35D /* User.swift in Sources */,
 				CE2A2D9F2394ADD900EF5DB3 /* Protocols.swift in Sources */,
@@ -374,6 +387,7 @@
 				CE2A2D9B23949D3800EF5DB3 /* Constants.swift in Sources */,
 				CE4C0EB2239635BC00CFC615 /* SelectImageVC.swift in Sources */,
 				CEA438182373D52900CBD8E7 /* SignUpVC.swift in Sources */,
+				CE76435023978FDA005E01D4 /* Post.swift in Sources */,
 				CE9F6185236FF42A00F1990A /* LoginVC.swift in Sources */,
 				CE4C0EB62396367C00CFC615 /* SelectPhotoHeaderCell.swift in Sources */,
 				CE9F6188236FF5B800F1990A /* Extensions.swift in Sources */,
@@ -384,6 +398,8 @@
 				CE9F616E236FF18300F1990A /* AppDelegate.swift in Sources */,
 				CEF5963D2383BBD90093491F /* SearchVC.swift in Sources */,
 				CE2A2D9D2394AA0600EF5DB3 /* ColorExtensions.swift in Sources */,
+				CE9964BD23988EA6004CD6C0 /* PostCell.swift in Sources */,
+				CE9964BF2398974C004CD6C0 /* CustomImageView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

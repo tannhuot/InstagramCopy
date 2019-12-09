@@ -1,14 +1,21 @@
 //
-//  SelectPhotoHeaderCell.swift
+//  PostCell.swift
 //  InstagramCopy
 //
-//  Created by Huot on 12/3/19.
+//  Created by Huot on 12/5/19.
 //
 
 import UIKit
 
-class SelectPhotoHeaderCell: UICollectionViewCell {
-    static let reuseIdentifier = String(describing: self)
+class PostCell: UICollectionViewCell {
+    static let reuseIndentifier = String(describing: self)
+    
+    var post: Post? {
+        didSet{
+            guard let imageUrl = post?.imageUrl else { return }
+            photoImageView.loadImage(with: imageUrl)
+        }
+    }
     
     let photoImageView: CustomImageView = {
         let iv = CustomImageView()

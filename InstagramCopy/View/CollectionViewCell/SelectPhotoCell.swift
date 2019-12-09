@@ -10,11 +10,10 @@ import UIKit
 class SelectPhotoCell: UICollectionViewCell {
     static let reuseIdentifier = String(describing: self)
     
-    let photoImageView: UIImageView = {
-        let iv = UIImageView()
+    let photoImageView: CustomImageView = {
+        let iv = CustomImageView()
         iv.contentMode = .scaleAspectFill
         iv.clipsToBounds = true
-        iv.backgroundColor = .lightGray
         return iv
     }()
     

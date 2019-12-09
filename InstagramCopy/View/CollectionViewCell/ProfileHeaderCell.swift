@@ -15,40 +15,34 @@ class ProfileHeaderCell: UICollectionViewCell {
         didSet{
             configureEditFollowButton()
             setUserStats(for: user)
-            
             nameLabel.text = user?.name
-            
             guard let profileImageUrl = user?.profileImageUrl else { return }
             profileImageView.loadImage(with: profileImageUrl)
         }
     }
-    
-    let profileImageView: UIImageView = {
-        let iv = UIImageView()
+    let profileImageView: CustomImageView = {
+        let iv = CustomImageView()
         iv.contentMode = .scaleAspectFill
         iv.clipsToBounds = true
         iv.image = UIImage(named: "profile_selected")
         iv.backgroundColor = .lightGray
         return iv
     }()
-    
     let nameLabel: UILabel = {
         let label = UILabel()
         label.text = "Your name here"
-        label.font = UIFont.boldSystemFont(ofSize: 12)
+        label.font = UIFont.boldSystemFont(ofSize: 13)
         return label
     }()
-    
     let postLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 0
-        let attributedText = NSMutableAttributedString(string: "5\n", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 14)])
+        let attributedText = NSMutableAttributedString(string: "999\n", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 14)])
         attributedText.append(NSAttributedString(string: "Posts", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14)]))
         label.attributedText = attributedText
         label.textAlignment = .center
         return label
     }()
-    
     lazy var followersLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 0
@@ -59,7 +53,6 @@ class ProfileHeaderCell: UICollectionViewCell {
         label.addGestureRecognizer(followTap)
         return label
     }()
-    
     lazy var followingLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 0
@@ -70,7 +63,6 @@ class ProfileHeaderCell: UICollectionViewCell {
         label.addGestureRecognizer(followTap)
         return label
     }()
-    
     let editProfileFollowButton: UIButton = {
         let btn = UIButton(type: .system)
         btn.layer.cornerRadius = 5
@@ -80,40 +72,46 @@ class ProfileHeaderCell: UICollectionViewCell {
         btn.setTitleColor(.black, for: .normal)
         return btn
     }()
-    
-    let gridButton: UIButton = {
+    lazy var gridButton: UIButton = {
         let btn = UIButton(type: .system)
         btn.setImage(#imageLiteral(resourceName: "grid"), for: .normal)
         btn.tintColor = UIColor(white: 0, alpha: 0.2)
+        btn.addTarget(self, action: #selector(handleGridButton), for: .touchUpInside)
         return btn
     }()
-    
-    let listButton: UIButton = {
+    lazy var listButton: UIButton = {
         let btn = UIButton(type: .system)
         btn.setImage(#imageLiteral(resourceName: "list"), for: .normal)
         btn.tintColor = UIColor(white: 0, alpha: 0.2)
+        btn.addTarget(self, action: #selector(handleListButton), for: .touchUpInside)
         return btn
     }()
-    
-    let bookmarkButton: UIButton = {
+    lazy var bookmarkButton: UIButton = {
         let btn = UIButton(type: .system)
         btn.setImage(#imageLiteral(resourceName: "ribbon"), for: .normal)
         btn.tintColor = UIColor(white: 0, alpha: 0.2)
+        btn.addTarget(self, action: #selector(handleBookMarkButton), for: .touchUpInside)
         return btn
     }()
     //MARK: - Handlers
     @objc func handleFollowingTapped() {
         delegage?.handleFollowingTapped(for: self)
     }
-    
     @objc func handleFollowersTapped() {
         delegage?.handleFollowersTapped(for: self)
     }
-    
     @objc func handleEditProfileFollowButton() {
         delegage?.handleEditProfileFollowTapped(for: self)
     }
-    
+    @objc func handleListButton() {
+        delegage?.handleListTapped(for: self)
+    }
+    @objc func handleGridButton() {
+        delegage?.handleGridTapped(for: self)
+    }
+    @objc func handleBookMarkButton() {
+        delegage?.handleBookMarkTapped(for: self)
+    }
     func setUserStats(for user: User?) {
         guard let uid = user?.uid else { return }
         
@@ -126,12 +124,10 @@ class ProfileHeaderCell: UICollectionViewCell {
             }else{
                 numberOfFollowers = 0
             }
-            
             let attributedText = NSMutableAttributedString(string: "\(numberOfFollowers)\n", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 14)])
             attributedText.append(NSAttributedString(string: "Followers", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14)]))
             self.followersLabel.attributedText = attributedText
         }
-        
         // get number of following
         USER_FOLLOWING_REF.child(uid).observe(.value) { (snapshot) in
             if let snapshot = snapshot.value as? Dictionary<String, Any> {
@@ -139,13 +135,11 @@ class ProfileHeaderCell: UICollectionViewCell {
             }else{
                 numberOfFollowing = 0
             }
-            
             let attributedText = NSMutableAttributedString(string: "\(numberOfFollowing)\n", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 14)])
             attributedText.append(NSAttributedString(string: "Following", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14)]))
             self.followingLabel.attributedText = attributedText
         }
     }
-    
     func configureEditFollowButton() {
         guard
             let currentUid = Auth.auth().currentUser?.uid,
@@ -169,7 +163,6 @@ class ProfileHeaderCell: UICollectionViewCell {
             }
         }
     }
-    
     func configureUserStats() {
         let stackView = UIStackView(arrangedSubviews: [postLabel, followersLabel, followingLabel])
         stackView.axis = .horizontal
@@ -179,7 +172,6 @@ class ProfileHeaderCell: UICollectionViewCell {
         stackView.anchor(top: topAnchor, left: profileImageView.rightAnchor, bottom: nil, right: rightAnchor, paddingTop: 15, paddingLeft: 15, paddingBottom: 0, paddingRight: 15, width: 0, height: 0)
         
     }
-    
     func configureBottomToolBar() {
         let topDividerView = UIView()
         topDividerView.backgroundColor = .lightGray
@@ -219,7 +211,6 @@ class ProfileHeaderCell: UICollectionViewCell {
         
         configureBottomToolBar()
     }
-    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

@@ -12,12 +12,16 @@ class MainTabVC: UITabBarController, UITabBarControllerDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         delegate = self
         configureViewControllers()
         
         // check user validation
         checkLogin()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.selectedIndex = 0
     }
 
     func configureViewControllers() {
@@ -49,6 +53,10 @@ class MainTabVC: UITabBarController, UITabBarControllerDelegate {
             let navController = UINavigationController(rootViewController: selectImageVC)
             navController.navigationBar.tintColor = .black
             present(navController, animated: true, completion: nil)
+        } else if tabBarController.selectedIndex == 3 {
+            dialogOneButton("", "not yet implement", self) { (_) in
+                print("ok")
+            }
         }
     }
     

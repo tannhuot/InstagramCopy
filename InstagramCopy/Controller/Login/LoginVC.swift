@@ -19,12 +19,9 @@ class LoginVC: UIViewController {
         logoImageView.anchor(top: nil, left: nil, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 200, height: 50)
         logoImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         logoImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
-        
-        view.backgroundColor = UIColor(red: 0/255, green: 120/255, blue: 175/255, alpha: 1)
-        
+        view.backgroundColor = .rgb(red: 0, green: 120, blue: 175)
         return view
     }()
-    
     
     let emailTextField: UITextField = {
         let tf = UITextField()
@@ -53,7 +50,7 @@ class LoginVC: UIViewController {
         let btn = UIButton(type: .system)
         btn.setTitle("Login", for: .normal)
         btn.setTitleColor(.white, for: .normal)
-        btn.backgroundColor = UIColor(red: 149/255, green: 204/255, blue: 244/255, alpha: 1)
+        btn.backgroundColor = .rgb(red: 149, green: 204, blue: 244)
         btn.layer.cornerRadius = 5
         btn.isEnabled = false
         btn.addTarget(self, action: #selector(handleLogIn), for: .touchUpInside)
@@ -63,7 +60,7 @@ class LoginVC: UIViewController {
     let dontHaveAccountButton: UIButton = {
         let btn = UIButton(type: .system)
         let attributedTitle = NSMutableAttributedString(string: "Don't have an account? ", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: UIColor.lightGray])
-        attributedTitle.append(NSAttributedString(string: "Sign Up", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: UIColor(red: 17/255, green: 154/255, blue: 237/255, alpha: 1)]))
+        attributedTitle.append(NSAttributedString(string: "Sign Up", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: UIColor.rgb(red: 17, green: 154, blue: 237)]))
         btn.setAttributedTitle(attributedTitle, for: .normal)
         
         btn.addTarget(self, action: #selector(handleShowSignUp), for: .touchUpInside)
@@ -118,12 +115,12 @@ class LoginVC: UIViewController {
         guard
             emailTextField.hasText,
             passwordTextField.hasText else {
-                loginButton.backgroundColor = UIColor(red: 149/255, green: 204/255, blue: 244/255, alpha: 1)
+                loginButton.backgroundColor = .rgb(red: 149, green: 204, blue: 244)
                 loginButton.isEnabled = false
                 return
         }
         loginButton.isEnabled = true
-        loginButton.backgroundColor = .getActiveButtonColor()
+        loginButton.backgroundColor = .getActiveButtonColor
     }
 
     func configureViewComponets() {

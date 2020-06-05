@@ -39,7 +39,6 @@ extension UIView {
         }
     }
 }
-
 extension Database {
     static func fetchUser(with uid: String, completion: @escaping(User) -> ()) {
         USER_REF.child(uid).observeSingleEvent(of: .value) { (snapshot) in

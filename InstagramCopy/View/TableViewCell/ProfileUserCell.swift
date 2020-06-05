@@ -40,7 +40,7 @@ class ProfileUserCell: UITableViewCell {
                     self.followButton.setTitle("Follow", for: .normal)
                     self.followButton.setTitleColor(.white, for: .normal)
                     self.followButton.layer.borderWidth = 0
-                    self.followButton.backgroundColor = .getActiveButtonColor()
+                    self.followButton.backgroundColor = .getActiveButtonColor
                 }
             })
         }

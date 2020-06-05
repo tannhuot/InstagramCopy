@@ -10,7 +10,6 @@ import Firebase
 
 class FeedCell: UICollectionViewCell {
     static let reuseIdentifier = String(describing: self)
-    
     var delegate: FeedCellDelegate?
     var post: Post? {
         didSet{
@@ -56,10 +55,14 @@ class FeedCell: UICollectionViewCell {
         return btn
     }()
     
-    let postImageView: CustomImageView = {
+    lazy var postImageView: CustomImageView = {
         let iv = CustomImageView()
         iv.contentMode = .scaleAspectFill
         iv.clipsToBounds = true
+        let likeTab = UITapGestureRecognizer(target: self, action: #selector(handleDoubleTapToLike))
+        likeTab.numberOfTapsRequired = 2
+        iv.isUserInteractionEnabled = true
+        iv.addGestureRecognizer(likeTab)
         return iv
     }()
     
@@ -133,7 +136,7 @@ class FeedCell: UICollectionViewCell {
         delegate?.handleOptionTapped(for: self)
     }
     @objc func handleLikeTapped() {
-        delegate?.handleLikeTapped(for: self)
+        delegate?.handleLikeTapped(for: self, isDoubleTab: false)
     }
     @objc func handleCommentTapped() {
         delegate?.handleCommentTapped(for: self)
@@ -144,14 +147,15 @@ class FeedCell: UICollectionViewCell {
     @objc func handleBookMarkTapped() {
         delegate?.handleBookMarkTapped(for: self)
     }
-    
+    @objc func handleDoubleTapToLike() {
+        delegate?.handleLikeTapped(for: self, isDoubleTab: true)
+    }
     func configureLikeButton() {
         delegate?.handleConfigureLikeButton(for: self)
     }
     //MARK: - Init
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
         setupView()
     }
     

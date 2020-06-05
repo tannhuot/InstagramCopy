@@ -152,7 +152,7 @@ class ProfileHeaderCell: UICollectionViewCell {
         }else{
             // configure as Follow button
             editProfileFollowButton.setTitleColor(.white, for: .normal)
-            editProfileFollowButton.backgroundColor = .getActiveButtonColor()
+            editProfileFollowButton.backgroundColor = .getActiveButtonColor
             
             user.checkIfUserIsFollowed { (followed) in
                 if followed{

@@ -21,7 +21,7 @@ protocol ProfileUserCellDelegate {
 protocol FeedCellDelegate {
     func handleUserNameTapped(for cell: FeedCell)
     func handleOptionTapped(for cell: FeedCell)
-    func handleLikeTapped(for cell: FeedCell)
+    func handleLikeTapped(for cell: FeedCell, isDoubleTab: Bool)
     func handleCommentTapped(for cell: FeedCell)
     func handleConfigureLikeButton(for cell: FeedCell)
     func handleShowLikes(for cell: FeedCell)

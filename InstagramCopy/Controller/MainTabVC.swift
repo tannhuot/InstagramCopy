@@ -52,6 +52,7 @@ class MainTabVC: UITabBarController, UITabBarControllerDelegate {
             let selectImageVC = SelectImageVC(collectionViewLayout: UICollectionViewFlowLayout())
             let navController = UINavigationController(rootViewController: selectImageVC)
             navController.navigationBar.tintColor = .black
+            fullScreen(viewController: navController)
             present(navController, animated: true, completion: nil)
         } else if tabBarController.selectedIndex == 3 {
             dialogOneButton("", "not yet implement", self) { (_) in
@@ -75,6 +76,7 @@ class MainTabVC: UITabBarController, UITabBarControllerDelegate {
             DispatchQueue.main.async{
                 let loginVC = LoginVC()
                 let navController = UINavigationController(rootViewController: loginVC)
+                fullScreen(viewController: navController)
                 self.present(navController, animated: true, completion: nil)
             }
         }else{

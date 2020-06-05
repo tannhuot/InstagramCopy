@@ -19,17 +19,13 @@ class FeedVC: UICollectionViewController, UICollectionViewDelegateFlowLayout {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         collectionView.backgroundColor = .white
-
         // Register cell classes
         self.collectionView!.register(FeedCell.self, forCellWithReuseIdentifier: FeedCell.reuseIdentifier)
-        
         // Configure refresh control
         let refreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action: #selector(handleRefresh), for: .valueChanged)
         collectionView.refreshControl = refreshControl
-
         configureNavBar()
         if !viewSinglePost {
             fetchPosts()
@@ -94,6 +90,7 @@ class FeedVC: UICollectionViewController, UICollectionViewDelegateFlowLayout {
                 
                 let loginVC = LoginVC()
                 let navController = UINavigationController(rootViewController: loginVC)
+                fullScreen(viewController: navController)
                 self.present(navController, animated: true, completion: nil)
             }catch{
                 print("Failed to sign out")
@@ -151,9 +148,13 @@ extension FeedVC: FeedCellDelegate {
         }
     }
     // Like Tapped
-    func handleLikeTapped(for cell: FeedCell) {
+    func handleLikeTapped(for cell: FeedCell, isDoubleTab: Bool) {
         guard let post = cell.post else { return }
         if post.didLike {
+            // Handle Unlike Post
+            if isDoubleTab {
+                return
+            }
             post.adjustLikes(addLike: false) { (likes) in
                 cell.likeButton.setImage(UIImage(named: "like_unselected"), for: .normal)
                 if likes > 1 {
@@ -163,6 +164,7 @@ extension FeedVC: FeedCellDelegate {
                 }
             }
         }else{
+            // Handle Like Post
             post.adjustLikes(addLike: true) { (likes) in
                 cell.likeButton.setImage(UIImage(named: "like_selected"), for: .normal)
                 if likes > 1 {
@@ -181,9 +183,10 @@ extension FeedVC: FeedCellDelegate {
     }
     // Comment Tapped
     func handleCommentTapped(for cell: FeedCell) {
-        dialogOneButton("", "not yet implement", self) { (_) in
-            print("ok")
-        }
+        guard let postId = cell.post?.postID else { return }
+        let vc = CommentVC(collectionViewLayout: UICollectionViewFlowLayout())
+        vc.postId = postId
+        navigationController?.pushViewController(vc, animated: true)
     }
     // Configure Like button
     func handleConfigureLikeButton(for cell: FeedCell) {

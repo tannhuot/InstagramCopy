@@ -29,7 +29,7 @@ class UploadPostVC: UIViewController {
 
     lazy var sharehButton: UIButton = {
         let btn = UIButton(type: .system)
-        btn.backgroundColor = UIColor(red: 149/255, green: 204/255, blue: 244/255, alpha: 1)
+        btn.backgroundColor = .rgb(red: 149, green: 204, blue: 244)
         btn.setTitle("Share", for: .normal)
         btn.setTitleColor(.white, for: .normal)
         btn.layer.cornerRadius = 5
@@ -145,10 +145,10 @@ extension UploadPostVC: UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
         guard !textView.text.isEmpty else {
             sharehButton.isEnabled = false
-            sharehButton.backgroundColor = UIColor(red: 149/255, green: 204/255, blue: 244/255, alpha: 1)
+            sharehButton.backgroundColor = .rgb(red: 149, green: 204, blue: 244)
             return
         }
         sharehButton.isEnabled = true
-        sharehButton.backgroundColor = .getActiveButtonColor()
+        sharehButton.backgroundColor = .getActiveButtonColor
     }
 }

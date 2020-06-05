@@ -74,7 +74,7 @@ class SignUpVC: UIViewController {
         let btn = UIButton(type: .system)
         btn.setTitle("Sign Up", for: .normal)
         btn.setTitleColor(.white, for: .normal)
-        btn.backgroundColor = UIColor(red: 149/255, green: 204/255, blue: 244/255, alpha: 1)
+        btn.backgroundColor = .rgb(red: 149, green: 204, blue: 244)
         btn.layer.cornerRadius = 5
         btn.addTarget(self, action: #selector(handleSignUp), for: .touchUpInside)
         btn.isEnabled = false
@@ -84,7 +84,7 @@ class SignUpVC: UIViewController {
     let alreadyHaveAccountButton: UIButton = {
         let btn = UIButton(type: .system)
         let attributedTitle = NSMutableAttributedString(string: "Already have an account? ", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: UIColor.lightGray])
-        attributedTitle.append(NSAttributedString(string: "Login", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: UIColor(red: 17/255, green: 154/255, blue: 237/255, alpha: 1)]))
+        attributedTitle.append(NSAttributedString(string: "Login", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: UIColor.rgb(red: 17, green: 154, blue: 237)]))
         btn.setAttributedTitle(attributedTitle, for: .normal)
         
         btn.addTarget(self, action: #selector(handleShowLogin), for: .touchUpInside)
@@ -183,11 +183,11 @@ class SignUpVC: UIViewController {
             userNameTextField.hasText,
             imageSelected == true else {
                 signUpButton.isEnabled = false
-                signUpButton.backgroundColor = UIColor(red: 149/255, green: 204/255, blue: 244/255, alpha: 1)
+                signUpButton.backgroundColor = .rgb(red: 149, green: 204, blue: 244)
                 return
         }
         signUpButton.isEnabled = true
-        signUpButton.backgroundColor = .getActiveButtonColor()
+        signUpButton.backgroundColor = .getActiveButtonColor
     }
     
     @objc func handlSelectProfilePhoto() {

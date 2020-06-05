@@ -10,12 +10,10 @@ import Firebase
 
 class FollowVC : UITableViewController {
     //MARK: - Properties
-    
     enum ViewingMode: Int {
         case Following
         case Follower
         case Likes
-        
         init(index: Int) {
             switch index {
             case 0: self = .Following
@@ -25,17 +23,15 @@ class FollowVC : UITableViewController {
             }
         }
     }
-    
     var viewingMode: ViewingMode!
     var isFromFollowing = true
     var uid: String?
     var users = [User]()
     var postID: String?
-    
+    // MARK: Life Circle
     override func viewDidLoad() {
         super.viewDidLoad()
-        configureNavTitle(with: self.viewingMode)
-        
+        configureNavTitle()
         tableView.separatorStyle = .none
         tableView.register(ProfileUserCell.self, forCellReuseIdentifier: ProfileUserCell.reuseIdentifire)
         fetchUsers()
@@ -65,7 +61,8 @@ class FollowVC : UITableViewController {
         navigationController?.pushViewController(vc, animated: true)
     }
     //MARK: - Handlers
-    func configureNavTitle(with viewingMode: ViewingMode) {
+    func configureNavTitle() {
+        guard let viewingMode = self.viewingMode else { return }
         switch viewingMode {
         case .Following: navigationItem.title = "Following"
         case .Follower: navigationItem.title = "Followers"
@@ -81,11 +78,9 @@ class FollowVC : UITableViewController {
         case .Likes: return POST_LIKES_REF
         }
     }
-    
     func fetchUsers() {
         guard let ref = getDatabaseReference() else { return }
         guard let viewingMode = self.viewingMode else { return }
-        
         switch viewingMode {
         case .Follower, .Following:
             guard let uid = self.uid else { return }
@@ -101,7 +96,6 @@ class FollowVC : UITableViewController {
             }
         case .Likes:
             guard let postID = self.postID else { return }
-            
             ref.child(postID).observe(.childAdded) { (snapshot) in
                 let uid = snapshot.key
                 Database.fetchUser(with: uid) { (user) in
@@ -112,7 +106,6 @@ class FollowVC : UITableViewController {
         }
     }
 }
-
 extension FollowVC: ProfileUserCellDelegate {
     func handleFollowTapped(for cell: ProfileUserCell) {
         guard let user = cell.user else { return }
@@ -122,7 +115,7 @@ extension FollowVC: ProfileUserCellDelegate {
             cell.followButton.setTitle("Follow", for: .normal)
             cell.followButton.setTitleColor(.white, for: .normal)
             cell.followButton.layer.borderWidth = 0
-            cell.followButton.backgroundColor = .getActiveButtonColor()
+            cell.followButton.backgroundColor = .getActiveButtonColor
         }else{
             user.follow()
             // configue follow button
@@ -133,5 +126,4 @@ extension FollowVC: ProfileUserCellDelegate {
             cell.followButton.backgroundColor = .white
         }
     }
-    
 }

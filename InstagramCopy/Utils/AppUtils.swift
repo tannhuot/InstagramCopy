@@ -64,3 +64,10 @@ func dialogOneButton(_ title: String = "",_ message: String, _ viewParent: UIVie
     alert.addAction(UIAlertAction(title: "OK", style: .default, handler: okHandler))
     viewParent.present(alert, animated: true, completion: nil)
 }
+func fullScreen(viewController: UIViewController){
+    if #available(iOS 13.0, *) {
+        viewController.modalPresentationStyle = .fullScreen
+    } else {
+        // Fallback on earlier versions
+    }
+}

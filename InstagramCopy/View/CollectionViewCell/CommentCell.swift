@@ -16,6 +16,7 @@ class CommentCell: UICollectionViewCell {
             profileImageView.loadImage(with: user.profileImageUrl)
             let attributedText = NSMutableAttributedString(string: user.userName, attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 12)])
             attributedText.append(NSAttributedString(string: " " + (comment?.commentText ?? ""), attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 12)]))
+            attributedText.append(NSAttributedString(string: " " + (getTimeStamp(from: comment?.creationgDate ?? Date(), to: Date()) ?? ""), attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 12), NSAttributedString.Key.foregroundColor: UIColor.lightGray]))
             commentTextView.attributedText = attributedText
         }
     }

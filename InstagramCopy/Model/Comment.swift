@@ -21,7 +21,7 @@ class Comment {
         if let commentText = dictionary["commentText"] as? String {
             self.commentText = commentText
         }
-        if let creationDate = dictionary["creationDatr"] as? Double {
+        if let creationDate = dictionary["creationDate"] as? Double {
             self.creationgDate = Date(timeIntervalSince1970: creationDate)
         }
     }

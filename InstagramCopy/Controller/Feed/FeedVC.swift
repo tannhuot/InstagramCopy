@@ -16,6 +16,7 @@ class FeedVC: UICollectionViewController, UICollectionViewDelegateFlowLayout {
     var viewSinglePost = false
     var post: Post?
     var navTitle = ""
+    var logoutDelegate: logoutDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -91,6 +92,9 @@ class FeedVC: UICollectionViewController, UICollectionViewDelegateFlowLayout {
                 let loginVC = LoginVC()
                 let navController = UINavigationController(rootViewController: loginVC)
                 fullScreen(viewController: navController)
+                
+                self.logoutDelegate?.didLogout()
+                
                 self.present(navController, animated: true, completion: nil)
             }catch{
                 print("Failed to sign out")
@@ -183,9 +187,9 @@ extension FeedVC: FeedCellDelegate {
     }
     // Comment Tapped
     func handleCommentTapped(for cell: FeedCell) {
-        guard let postId = cell.post?.postID else { return }
+        guard let post = cell.post else { return }
         let vc = CommentVC(collectionViewLayout: UICollectionViewFlowLayout())
-        vc.postId = postId
+        vc.post = post
         navigationController?.pushViewController(vc, animated: true)
     }
     // Configure Like button

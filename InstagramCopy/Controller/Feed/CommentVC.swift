@@ -11,7 +11,7 @@ import UIKit
 
 class CommentVC: UICollectionViewController, UICollectionViewDelegateFlowLayout {
     // MARK: Properties
-    var postId = ""
+    var post: Post?
     var comments = [Comment]()
     lazy var containerView: UIView = {
         let view = UIView()
@@ -81,12 +81,13 @@ class CommentVC: UICollectionViewController, UICollectionViewDelegateFlowLayout 
         let values = ["commentText": commentText,
                       "creationDate": creationDate,
                       "uid":uid] as [String : Any]
-        COMMENT_REF.child(postId).childByAutoId().updateChildValues(values) { (error, ref) in
+        COMMENT_REF.child(post?.postID ?? "").childByAutoId().updateChildValues(values) { (error, ref) in
+            self.uploadCommentNotificationToServer()
             self.commentTextField.text = ""
         }
     }
     private func fetchComments() {
-        COMMENT_REF.child(postId).observe(.childAdded) { (snapshot) in
+        COMMENT_REF.child(post?.postID ?? "").observe(.childAdded) { (snapshot) in
             guard let dic = snapshot.value as? Dictionary<String, AnyObject> else { return }
             guard let uid = dic["uid"] as? String else { return }
             Database.fetchUser(with: uid) { (user) in
@@ -104,6 +105,28 @@ class CommentVC: UICollectionViewController, UICollectionViewDelegateFlowLayout 
             }
         }
     }
+    
+    private func uploadCommentNotificationToServer() {
+        guard let currentUid = Auth.auth().currentUser?.uid,
+              let postId = post?.postID,
+              let uid = post?.user?.uid
+        else { return }
+        let creationDate = Int(NSDate().timeIntervalSince1970)
+        
+        // notification value
+        let values: [String : Any] = ["checked": 0,
+                                      "creationDate": creationDate,
+                                     "uid": currentUid,
+                                     "type": COMMENT_INT_VALUE,
+                                     "postId": postId
+                                    ]
+        
+        // upload comment notification to server
+        if uid != currentUid {
+            NOTIFICATION_REF.child(uid).childByAutoId().updateChildValues(values)
+        }
+    }
+    
     // MARK: UICollectionView
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 50)

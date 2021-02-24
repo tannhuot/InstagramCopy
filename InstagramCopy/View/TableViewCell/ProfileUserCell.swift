@@ -30,18 +30,7 @@ class ProfileUserCell: UITableViewCell {
             }
             
             user?.checkIfUserIsFollowed(completion: { (followed) in
-                if followed {
-                    self.followButton.setTitle("Following", for: .normal)
-                    self.followButton.setTitleColor(.black, for: .normal)
-                    self.followButton.layer.borderWidth = 0.5
-                    self.followButton.layer.borderColor = UIColor.lightGray.cgColor
-                    self.followButton.backgroundColor = .white
-                }else{
-                    self.followButton.setTitle("Follow", for: .normal)
-                    self.followButton.setTitleColor(.white, for: .normal)
-                    self.followButton.layer.borderWidth = 0
-                    self.followButton.backgroundColor = .getActiveButtonColor
-                }
+                self.followButton.configure(didFollow: followed)
             })
         }
     }

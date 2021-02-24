@@ -71,3 +71,13 @@ func fullScreen(viewController: UIViewController){
         // Fallback on earlier versions
     }
 }
+
+func getTimeStamp(from: Date, to: Date) -> String? {
+        
+    let dateFormatter = DateComponentsFormatter()
+    dateFormatter.allowedUnits = [.second, .minute, .hour, .day, .weekOfMonth, .month, .year]
+    dateFormatter.maximumUnitCount = 1
+    dateFormatter.unitsStyle = .full
+    
+    return dateFormatter.string(from: from, to: to)
+}

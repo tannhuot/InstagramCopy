@@ -112,18 +112,11 @@ extension FollowVC: ProfileUserCellDelegate {
         if user.isFollowed {
             user.unfollow()
             // configue follow button
-            cell.followButton.setTitle("Follow", for: .normal)
-            cell.followButton.setTitleColor(.white, for: .normal)
-            cell.followButton.layer.borderWidth = 0
-            cell.followButton.backgroundColor = .getActiveButtonColor
+            cell.followButton.configure(didFollow: false)
         }else{
             user.follow()
             // configue follow button
-            cell.followButton.setTitle("Following", for: .normal)
-            cell.followButton.setTitleColor(.black, for: .normal)
-            cell.followButton.layer.borderWidth = 0.5
-            cell.followButton.layer.borderColor = UIColor.lightGray.cgColor
-            cell.followButton.backgroundColor = .white
+            cell.followButton.configure(didFollow: true)
         }
     }
 }

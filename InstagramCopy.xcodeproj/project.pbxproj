@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		00812DF0707F938C35AF15A7 /* Pods_InstagramCopy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9E186332B41091B096B61649 /* Pods_InstagramCopy.framework */; };
 		2476FD2325E4E3F200155A4B /* Notification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2476FD2225E4E3F200155A4B /* Notification.swift */; };
+		342D38F225F4DB0900A5CB0C /* SearchPostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 342D38F125F4DB0900A5CB0C /* SearchPostCell.swift */; };
 		344046CC259C848B0012F534 /* NotificationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344046CB259C848B0012F534 /* NotificationCell.swift */; };
 		CE0354A823852CFA00198E50 /* ProfileHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE0354A723852CFA00198E50 /* ProfileHeaderCell.swift */; };
 		CE1AC8232489F652009B6A91 /* CommentVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE1AC8222489F652009B6A91 /* CommentVC.swift */; };
@@ -47,6 +48,7 @@
 
 /* Begin PBXFileReference section */
 		2476FD2225E4E3F200155A4B /* Notification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notification.swift; sourceTree = "<group>"; };
+		342D38F125F4DB0900A5CB0C /* SearchPostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchPostCell.swift; sourceTree = "<group>"; };
 		344046CB259C848B0012F534 /* NotificationCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationCell.swift; sourceTree = "<group>"; };
 		8142BFA4B418682E04D69D5A /* Pods-InstagramCopy.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-InstagramCopy.debug.xcconfig"; path = "Target Support Files/Pods-InstagramCopy/Pods-InstagramCopy.debug.xcconfig"; sourceTree = "<group>"; };
 		9E186332B41091B096B61649 /* Pods_InstagramCopy.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_InstagramCopy.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -135,6 +137,7 @@
 				CE4C0EB52396367C00CFC615 /* SelectPhotoHeaderCell.swift */,
 				CE9964C023989BEC004CD6C0 /* FeedCell.swift */,
 				CE1AC8242489F734009B6A91 /* CommentCell.swift */,
+				342D38F125F4DB0900A5CB0C /* SearchPostCell.swift */,
 			);
 			path = CollectionViewCell;
 			sourceTree = "<group>";
@@ -303,7 +306,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1030;
-				LastUpgradeCheck = 1030;
+				LastUpgradeCheck = 1240;
 				TargetAttributes = {
 					CE9F6169236FF18300F1990A = {
 						CreatedOnToolsVersion = 10.3;
@@ -409,6 +412,7 @@
 				CE9F6185236FF42A00F1990A /* LoginVC.swift in Sources */,
 				CE4C0EB62396367C00CFC615 /* SelectPhotoHeaderCell.swift in Sources */,
 				2476FD2325E4E3F200155A4B /* Notification.swift in Sources */,
+				342D38F225F4DB0900A5CB0C /* SearchPostCell.swift in Sources */,
 				CE9F6188236FF5B800F1990A /* Extensions.swift in Sources */,
 				CEF596392383B77E0093491F /* MainTabVC.swift in Sources */,
 				CE7E7B5C238E0F1200B9B35D /* ProfileUserCell.swift in Sources */,
@@ -463,6 +467,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -524,6 +529,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;

@@ -69,9 +69,8 @@ class FeedVC: UICollectionViewController, UICollectionViewDelegateFlowLayout {
         collectionView.reloadData()
     }
     @objc func handleShowMessage() {
-        dialogOneButton("", "not yet implement", self) { (_) in
-            print("ok")
-        }
+        let vc = MessageVC()
+        navigationController?.pushViewController(vc, animated: true)
     }
     func configureNavBar() {
         if !viewSinglePost {

@@ -6,10 +6,12 @@
 //
 
 import UIKit
+import Firebase
 
 class MessageVC: UITableViewController {
     //MARK: - Properties
     var messages = [Message]()
+    var messageDictionary = [String: Message]()
     
     //MARK: - Life Cycle
     override func viewDidLoad() {
@@ -18,6 +20,8 @@ class MessageVC: UITableViewController {
         configureNavigationBar()
         
         tableView.register(MessageCell.self, forCellReuseIdentifier: MessageCell.reuseIdentifire)
+        
+        fetchMessages()
     }
 }
 
@@ -31,13 +35,17 @@ extension MessageVC {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: MessageCell.reuseIdentifire, for: indexPath)
-        
+        let cell = tableView.dequeueReusableCell(withIdentifier: MessageCell.reuseIdentifire, for: indexPath) as! MessageCell
+        cell.message = messages[indexPath.row]
         return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
+        let msg = messages[indexPath.row]
+        let chatPartId = msg.getChatPartnerId()
+        Database.fetchUser(with: chatPartId) { (user) in
+            self.showChatVC(forUser: user)
+        }
     }
 }
 
@@ -60,5 +68,38 @@ extension MessageVC {
         let vc = ChatViewController(collectionViewLayout: UICollectionViewFlowLayout())
         vc.user = user
         navigationController?.pushViewController(vc, animated: true)
+    }
+}
+
+//MARK: - API
+extension MessageVC {
+    func fetchMessages() {
+        guard let currentUid = Auth.auth().currentUser?.uid else { return }
+        
+        self.messages.removeAll()
+        self.messageDictionary.removeAll()
+        self.tableView.reloadData()
+        
+        USER_MESSAGE_REF.child(currentUid).observe(.childAdded) { (snapshot) in
+            let uid = snapshot.key
+            
+            USER_MESSAGE_REF.child(currentUid).child(uid).observe(.childAdded) { (snapshot) in
+                let messaageId = snapshot.key
+                
+                self.fetchMessage(withMessageId: messaageId)
+            }
+        }
+    }
+    
+    func fetchMessage(withMessageId messageId: String) {
+        MESSAGE_REF.child(messageId).observeSingleEvent(of: .value) { (snapshot) in
+            guard let dictionary =  snapshot.value as? Dictionary<String, Any> else { return }
+            
+            let message = Message(dictionary: dictionary)
+            let chatPartnerId = message.getChatPartnerId()
+            self.messageDictionary[chatPartnerId] = message
+            self.messages = Array(self.messageDictionary.values)
+            self.tableView.reloadData()
+        }
     }
 }

@@ -7,6 +7,7 @@
 
 import UIKit
 import Firebase
+import AVFoundation
 
 class ChatCell: UICollectionViewCell {
     //MARK: - Properties
@@ -29,6 +30,9 @@ class ChatCell: UICollectionViewCell {
     var bubbleWidthAnchor: NSLayoutConstraint?
     var bubbleViewRightAnchor: NSLayoutConstraint?
     var bubbleViewLeftAnchor: NSLayoutConstraint?
+    var delegate: ChatCellDelegate?
+    var playerLayer: AVPlayerLayer?
+    var player: AVPlayer?
     
     let bubbleView: UIView = {
         let view = UIView()
@@ -37,6 +41,21 @@ class ChatCell: UICollectionViewCell {
         view.layer.masksToBounds = true
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
+    }()
+    
+    let activityIndicatorView: UIActivityIndicatorView = {
+        let aiv = UIActivityIndicatorView(style: .whiteLarge)
+        aiv.translatesAutoresizingMaskIntoConstraints = false
+        aiv.hidesWhenStopped = true
+        return aiv
+    }()
+    
+    lazy var playButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setImage(UIImage(named: "play"), for: .normal)
+        button.tintColor = .white
+        button.addTarget(self, action: #selector(handlePlayVideo), for: .touchUpInside)
+        return button
     }()
     
     let textView: UITextView = {
@@ -57,6 +76,13 @@ class ChatCell: UICollectionViewCell {
         return iv
     }()
     
+    let messageImageView: CustomImageView = {
+        let iv = CustomImageView()
+        iv.contentMode = .scaleAspectFill
+        iv.clipsToBounds = true
+        return iv
+    }()
+    
     //MARK: - Init
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -67,7 +93,7 @@ class ChatCell: UICollectionViewCell {
         addSubview(textView)
         addSubview(profileImageView)
         
-        /*bubbleView.addSubview(messageImageView)
+        bubbleView.addSubview(messageImageView)
         messageImageView.anchor(top: bubbleView.topAnchor, left: bubbleView.leftAnchor, bottom: bubbleView.bottomAnchor, right: bubbleView.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
         
         bubbleView.addSubview(playButton)
@@ -81,7 +107,7 @@ class ChatCell: UICollectionViewCell {
         activityIndicatorView.centerXAnchor.constraint(equalTo: bubbleView.centerXAnchor).isActive = true
         activityIndicatorView.centerYAnchor.constraint(equalTo: bubbleView.centerYAnchor).isActive = true
         activityIndicatorView.widthAnchor.constraint(equalToConstant: 50).isActive = true
-        activityIndicatorView.heightAnchor.constraint(equalToConstant: 50).isActive = true*/
+        activityIndicatorView.heightAnchor.constraint(equalToConstant: 50).isActive = true
         
         profileImageView.anchor(top: nil, left: leftAnchor, bottom: bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 8, paddingBottom: -4, paddingRight: 0, width: 32, height: 32)
         profileImageView.layer.cornerRadius = 32 / 2
@@ -109,5 +135,9 @@ class ChatCell: UICollectionViewCell {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    @objc func handlePlayVideo() {
+        delegate?.handlePlayVideo(for: self)
     }
 }

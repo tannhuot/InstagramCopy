@@ -100,14 +100,14 @@ class UploadPostVC: UIViewController {
 
         // update storage
         let fileName = NSUUID().uuidString
-        Storage.storage().reference().child("post_images").child(fileName).putData(uploadData, metadata: nil) { (metadata, error) in
+        STORAGE_POST_IMAGES_REF.child(fileName).putData(uploadData, metadata: nil) { (metadata, error) in
             if let error = error {
                 hideProgressIndicator(view: self.view)
                 print("Failed to upload...", error.localizedDescription)
             }
 
             // image url
-            Storage.storage().reference().child("post_images").child(fileName).downloadURL(completion: { (url, error) in
+            STORAGE_POST_IMAGES_REF.child(fileName).downloadURL(completion: { (url, error) in
                 if let error = error {
                     hideProgressIndicator(view: self.view)
                     print("failed to get image url", error.localizedDescription)

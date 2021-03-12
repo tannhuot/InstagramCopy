@@ -80,10 +80,10 @@ extension MessageVC {
         self.messageDictionary.removeAll()
         self.tableView.reloadData()
         
-        USER_MESSAGE_REF.child(currentUid).observe(.childAdded) { (snapshot) in
+        USER_MESSAGES_REF.child(currentUid).observe(.childAdded) { (snapshot) in
             let uid = snapshot.key
             
-            USER_MESSAGE_REF.child(currentUid).child(uid).observe(.childAdded) { (snapshot) in
+            USER_MESSAGES_REF.child(currentUid).child(uid).observe(.childAdded) { (snapshot) in
                 let messaageId = snapshot.key
                 
                 self.fetchMessage(withMessageId: messaageId)
@@ -92,7 +92,7 @@ extension MessageVC {
     }
     
     func fetchMessage(withMessageId messageId: String) {
-        MESSAGE_REF.child(messageId).observeSingleEvent(of: .value) { (snapshot) in
+        MESSAGES_REF.child(messageId).observeSingleEvent(of: .value) { (snapshot) in
             guard let dictionary =  snapshot.value as? Dictionary<String, Any> else { return }
             
             let message = Message(dictionary: dictionary)

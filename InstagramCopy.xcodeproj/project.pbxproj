@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		00812DF0707F938C35AF15A7 /* Pods_InstagramCopy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9E186332B41091B096B61649 /* Pods_InstagramCopy.framework */; };
+		24657DD925FB4E5D00E8FF74 /* MessageInputAccesoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24657DD825FB4E5D00E8FF74 /* MessageInputAccesoryView.swift */; };
 		2476FD2325E4E3F200155A4B /* Notification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2476FD2225E4E3F200155A4B /* Notification.swift */; };
 		3407A0F225F520830078DA01 /* MessageVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3407A0F125F520830078DA01 /* MessageVC.swift */; };
 		3407A0F525F521FC0078DA01 /* MessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3407A0F425F521FC0078DA01 /* MessageCell.swift */; };
@@ -54,6 +55,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		24657DD825FB4E5D00E8FF74 /* MessageInputAccesoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageInputAccesoryView.swift; sourceTree = "<group>"; };
 		2476FD2225E4E3F200155A4B /* Notification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notification.swift; sourceTree = "<group>"; };
 		3407A0F125F520830078DA01 /* MessageVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageVC.swift; sourceTree = "<group>"; };
 		3407A0F425F521FC0078DA01 /* MessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCell.swift; sourceTree = "<group>"; };
@@ -224,6 +226,7 @@
 			children = (
 				CE4C0EB82396369600CFC615 /* CollectionViewCell */,
 				CE4C0EB72396368C00CFC615 /* TableViewCell */,
+				24657DD825FB4E5D00E8FF74 /* MessageInputAccesoryView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -425,6 +428,7 @@
 				CE9964C123989BEC004CD6C0 /* FeedCell.swift in Sources */,
 				CED4E128238E1A100037C64D /* ProgressIndicator.swift in Sources */,
 				CE1AC8232489F652009B6A91 /* CommentVC.swift in Sources */,
+				24657DD925FB4E5D00E8FF74 /* MessageInputAccesoryView.swift in Sources */,
 				CE7E7B5E238E0F5C00B9B35D /* User.swift in Sources */,
 				CE1AC829248A25FD009B6A91 /* SceneDelegate.swift in Sources */,
 				3407A0FE25F52E400078DA01 /* Message.swift in Sources */,

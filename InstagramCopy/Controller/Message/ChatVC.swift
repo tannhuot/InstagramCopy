@@ -7,29 +7,21 @@
 
 import UIKit
 import Firebase
+import MobileCoreServices
+import AVFoundation
 
 class ChatViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
     //MARK: - Properties
     var user: User?
     var messages = [Message]()
+    var player: AVPlayer?
+    var playerLayer: AVPlayerLayer?
     
-    lazy var containerView: UIView = {
-       let v = UIView()
-        v.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 50)
-        
-        v.addSubview(sendButton)
-        sendButton.anchor(top: nil, left: nil, bottom: nil, right: v.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 16, width: 50, height: 0)
-        sendButton.centerYAnchor.constraint(equalTo: v.centerYAnchor).isActive = true
-        
-        v.addSubview(messageTextField)
-        messageTextField.anchor(top: v.topAnchor, left: v.leftAnchor, bottom: v.bottomAnchor, right: sendButton.leftAnchor, paddingTop: 0, paddingLeft: 12, paddingBottom: 0, paddingRight: 8, width: 0, height: 0)
-        
-        let separatorView = UIView()
-        separatorView.backgroundColor = .lightGray
-        v.addSubview(separatorView)
-        separatorView.anchor(top: v.topAnchor, left: v.leftAnchor, bottom: nil, right: v.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0.5)
-        
-        return v
+    lazy var containerView: MessageInputAccesoryView = {
+        let frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 60)
+        let containerView = MessageInputAccesoryView(frame: frame)
+        containerView.delegate = self
+        return containerView
     }()
     
     let messageTextField: UITextField = {
@@ -37,21 +29,18 @@ class ChatViewController: UICollectionViewController, UICollectionViewDelegateFl
         tf.placeholder = "Enter message"
         return tf
     }()
-    
-    let sendButton: UIButton = {
-        let btn = UIButton(type: .system)
-        btn.setTitle("Send", for: .normal)
-        btn.addTarget(self, action: #selector(handleSentMessage), for: .touchUpInside)
-        return btn
-    }()
-    
+
     //MARK: - Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
         configureNavigation()
+        configureKeyboardObservers()
         
-        collectionView.backgroundColor = .white
+        collectionView?.backgroundColor = .white
+        collectionView?.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 16, right: 0)
+        collectionView?.alwaysBounceVertical = true
+        collectionView?.keyboardDismissMode = .interactive
         collectionView.register(ChatCell.self, forCellWithReuseIdentifier: ChatCell.reuseIdentifire)
         
         observeMessage()
@@ -75,6 +64,9 @@ class ChatViewController: UICollectionViewController, UICollectionViewDelegateFl
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         tabBarController?.tabBar.isHidden = false
+        
+        player?.pause()
+        playerLayer?.removeFromSuperlayer()
     }
 }
 
@@ -87,7 +79,7 @@ extension ChatViewController {
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ChatCell.reuseIdentifire, for: indexPath) as! ChatCell
         cell.message = messages[indexPath.row]
-        
+        cell.delegate = self
         configureMessage(cell: cell, message: messages[indexPath.item])
         return cell
     }
@@ -99,9 +91,9 @@ extension ChatViewController {
         
         if let messageText = message.messageText {
             height = estimateFrameForText(messageText).height + 20
-        } /*else if let imageWidth = message.imageWidth?.floatValue, let imageHeight = message.imageHeight?.floatValue {
+        } else if let imageWidth = message.imageWidth?.floatValue, let imageHeight = message.imageHeight?.floatValue {
             height = CGFloat(imageHeight / imageWidth * 200)
-        }*/
+        }
         
         return CGSize(width: view.frame.width, height: height)
     }
@@ -128,15 +120,21 @@ extension ChatViewController {
         navigationController?.pushViewController(userProfileController, animated: true)
     }
     
-    @objc private func handleSentMessage() {
-        uploadMessageToServer()
-        
-        messageTextField.text = nil
+    @objc func handleKeyboardDidShow() {
+        scrollToBottom()
     }
     
-    @objc func handleKeyboardDidShow() {
-        //scrollToBottom()
+    func configureKeyboardObservers() {
+        NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardDidShow), name: UIResponder.keyboardDidShowNotification, object: nil)
     }
+    
+    func scrollToBottom() {
+        if messages.count > 0 {
+            let indexPath = IndexPath(item: messages.count - 1, section: 0)
+            collectionView?.scrollToItem(at: indexPath, at: .top, animated: true)
+        }
+    }
+
     
     func estimateFrameForText(_ text: String) -> CGRect {
         let size = CGSize(width: 200, height: 1000)
@@ -150,13 +148,13 @@ extension ChatViewController {
         if let messageText = message.messageText {
             cell.bubbleWidthAnchor?.constant = estimateFrameForText(messageText).width + 32
             cell.frame.size.height = estimateFrameForText(messageText).height + 20
-            //cell.messageImageView.isHidden = true
+            cell.messageImageView.isHidden = true
             cell.textView.isHidden = false
             cell.bubbleView.backgroundColor  = UIColor.rgb(red: 0, green: 137, blue: 249)
-        } /*else if let messageImageUrl = message.imageUrl {
+        } else if let messageImageUrl = message.imageUrl {
             cell.bubbleWidthAnchor?.constant = 200
             cell.messageImageView.loadImage(with: messageImageUrl)
-            //cell.messageImageView.isHidden = false
+            cell.messageImageView.isHidden = false
             cell.textView.isHidden = true
             cell.bubbleView.backgroundColor = .clear
         }
@@ -174,7 +172,7 @@ extension ChatViewController {
             cell.playButton.isHidden = false
         } else {
             cell.playButton.isHidden = true
-        }*/
+        }
         
         if message.fromId == currentUid {
             cell.bubbleViewRightAnchor?.isActive = true
@@ -193,25 +191,48 @@ extension ChatViewController {
 
 //MARK: - API
 extension ChatViewController {
-    func uploadMessageToServer() {
-        guard let messageText = messageTextField.text,
-              let currentuid = Auth.auth().currentUser?.uid,
-              let user = self.user
-              else { return }
+    func uploadMessageToServer(withProperties properties: [String: Any]) {
+        guard let currentUid = Auth.auth().currentUser?.uid else { return }
+        guard let user = self.user else { return }
         let creationDate = Int(NSDate().timeIntervalSince1970)
+
+        let uid = user.uid
+
+        var values: [String: Any] = ["toId": user.uid, "fromId": currentUid, "creationDate": creationDate, "read": false]
+
+        properties.forEach({values[$0] = $1})
         
-        let messageValue = [ "creationDate": creationDate,
-                             "fromId": currentuid,
-                             "toId": user.uid,
-                             "messageText": messageText
-        ] as [String : Any]
+        let messageRef = MESSAGES_REF.childByAutoId()
         
-        let messageRef = MESSAGE_REF.childByAutoId()
-        messageRef.updateChildValues(messageValue)
+        // UPDATE: - Safely unwrapped messageKey to work with Firebase 5
+        guard let messageKey = messageRef.key else { return }
         
-        USER_MESSAGE_REF.child(currentuid).child(user.uid).updateChildValues(["\(messageRef.key ?? "")" : 1])
+        messageRef.updateChildValues(values) { (err, ref) in
+            USER_MESSAGES_REF.child(currentUid).child(uid).updateChildValues([messageKey: 1])
+            USER_MESSAGES_REF.child(uid).child(currentUid).updateChildValues([messageKey: 1])
+        }
         
-        USER_MESSAGE_REF.child(user.uid).child(currentuid).updateChildValues(["\(messageRef.key ?? "")" : 1])
+        uploadMessageNotification(isImageMessage: false, isVideoMessage: false, isTextMessage: true)
+    }
+    
+    func uploadMessageNotification(isImageMessage: Bool, isVideoMessage: Bool, isTextMessage: Bool) {
+        guard let fromId = Auth.auth().currentUser?.uid else { return }
+        guard let toId = user?.uid else { return }
+        var messageText: String!
+        
+        if isImageMessage {
+            messageText = "Sent an image"
+        } else if isVideoMessage {
+            messageText = "Sent a video"
+        } else if isTextMessage{
+            messageText = containerView.messageInputTextView.text
+        }
+        
+        let values = ["fromId": fromId,
+                      "toId": toId,
+                      "messageText": messageText!] as [String : Any]
+        
+        USER_MESSAGE_NOTIFICATIONS_REF.child(toId).childByAutoId().updateChildValues(values)
     }
     
     func observeMessage() {
@@ -219,7 +240,7 @@ extension ChatViewController {
               let chatPartnerId = self.user?.uid
         else { return }
         
-        USER_MESSAGE_REF.child(currentuid).child(chatPartnerId).observe(.childAdded) { (snapshot) in
+        USER_MESSAGES_REF.child(currentuid).child(chatPartnerId).observe(.childAdded) { (snapshot) in
             let messageId = snapshot.key
             
             self.fetchMessage(withMessageId: messageId)
@@ -227,12 +248,141 @@ extension ChatViewController {
     }
     
     func fetchMessage(withMessageId messageId: String) {
-        MESSAGE_REF.child(messageId).observeSingleEvent(of: .value) { (snapshot) in
-            guard let dictionary =  snapshot.value as? Dictionary<String, Any> else { return }
-            
+        MESSAGES_REF.child(messageId).observeSingleEvent(of: .value) { (snapshot) in
+            guard let dictionary = snapshot.value as? Dictionary<String, AnyObject> else { return }
             let message = Message(dictionary: dictionary)
             self.messages.append(message)
-            self.collectionView.reloadData()
+            
+            DispatchQueue.main.async(execute: {
+                self.collectionView?.reloadData()
+                let indexPath = IndexPath(item: self.messages.count - 1, section: 0)
+                self.collectionView?.scrollToItem(at: indexPath, at: .bottom, animated: true)
+            })
+            self.setMessageToRead(forMessageId: messageId, fromId: message.fromId)
+        }
+    }
+    
+    func uploadImageToStorage(selectedImage image: UIImage, completion: @escaping (_ imageUrl: String) -> ()) {
+        let filename = NSUUID().uuidString
+        guard let uploadData = image.jpegData(compressionQuality: 0.3) else { return }
+        
+        // UPDATE: - Created constant for ref to work with Firebase 5
+        let ref = STORAGE_MESSAGE_IMAGES_REF.child(filename)
+        
+        ref.putData(uploadData, metadata: nil) { (metadata, error) in
+            if error != nil {
+                print("DEBUG: Unable to upload image to Firebase Storage")
+                return
+            }
+            
+            ref.downloadURL(completion: { (url, error) in
+                guard let url = url else { return }
+                completion(url.absoluteString)
+            })
+        }
+    }
+    
+    func sendMessage(withImageUrl imageUrl: String, image: UIImage) {
+        let properties = ["imageUrl": imageUrl, "imageWidth": image.size.width as Any, "imageHeight": image.size.height as Any] as [String: AnyObject]
+        
+        self.uploadMessageToServer(withProperties: properties)
+        self.uploadMessageNotification(isImageMessage: true, isVideoMessage: false, isTextMessage: false)
+    }
+    
+    func uploadVideoToStorage(withUrl url: URL) {
+        let filename = NSUUID().uuidString
+        
+        // UPDATE: - Created constant for ref to work with Firebase 5
+        let ref = STORAGE_MESSAGE_VIDEO_REF.child(filename)
+        
+        ref.putFile(from: url, metadata: nil) { (metadata, error) in
+            
+            if error != nil {
+                print("DEBUG: Failed to upload video to FIRStorage with error: ", error as Any)
+                return
+            }
+            
+            ref.downloadURL(completion: { (url, error) in
+                guard let url = url else { return }
+                guard let thumbnailImage = self.thumbnailImage(forFileUrl: url) else { return }
+                let videoUrl = url.absoluteString
+                
+                self.uploadImageToStorage(selectedImage: thumbnailImage, completion: { (imageUrl) in
+                    let properties: [String: AnyObject] = ["imageWidth": thumbnailImage.size.width as AnyObject, "imageHeight": thumbnailImage.size.height as AnyObject, "videoUrl": videoUrl as AnyObject, "imageUrl": imageUrl as AnyObject]
+                    self.uploadMessageToServer(withProperties: properties)
+                    self.uploadMessageNotification(isImageMessage: false, isVideoMessage: true, isTextMessage: false)
+                })
+            })
+        }
+    }
+    
+    func thumbnailImage(forFileUrl fileUrl: URL) -> UIImage? {
+        let asset = AVAsset(url: fileUrl)
+        let imageGenerator = AVAssetImageGenerator(asset: asset)
+        
+        do {
+            let time = CMTimeMake(value: 1, timescale: 60)
+            let thumbnailCGImage = try imageGenerator.copyCGImage(at: time, actualTime: nil)
+            return UIImage(cgImage: thumbnailCGImage)
+        } catch let error {
+            print("DEBUG: Exception error: ", error)
+        }
+        return nil
+    }
+    
+    func setMessageToRead(forMessageId messageId: String, fromId: String) {
+        if fromId != Auth.auth().currentUser?.uid {
+            MESSAGES_REF.child(messageId).child("read").setValue(true)
         }
     }
 }
+
+// MARK: - UIImagePickerControllerDelegate
+extension ChatViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        
+        if let videoUrl = info[.mediaURL] as? URL {
+            uploadVideoToStorage(withUrl: videoUrl)
+        } else if let selectedImage = info[.editedImage] as? UIImage {
+            uploadImageToStorage(selectedImage: selectedImage) { (imageUrl) in
+                self.sendMessage(withImageUrl: imageUrl, image: selectedImage)
+            }
+        }
+        dismiss(animated: true, completion: nil)
+    }
+}
+
+// MARK: - MessageInputAccesoryViewDelegate
+extension ChatViewController: MessageInputAccesoryViewDelegate {
+    
+    func handleUploadMessage(message: String) {
+        let properties = ["messageText": message] as [String: AnyObject]
+        uploadMessageToServer(withProperties: properties)
+        
+        self.containerView.clearMessageTextView()
+    }
+    
+    func handleSelectImage() {
+        let imagePickerController = UIImagePickerController()
+        imagePickerController.delegate = self
+        imagePickerController.allowsEditing = true
+        imagePickerController.mediaTypes = [kUTTypeImage as String, kUTTypeMovie as String]
+        present(imagePickerController, animated: true, completion: nil)
+    }
+}
+
+// MARK: - ChatCellDelegate
+extension ChatViewController: ChatCellDelegate {
+    func handlePlayVideo(for cell: ChatCell) {
+        guard let player = self.player else { return }
+        guard let playerLayer = self.playerLayer else { return }
+        playerLayer.frame = cell.bubbleView.bounds
+        cell.bubbleView.layer.addSublayer(playerLayer)
+        
+        cell.activityIndicatorView.startAnimating()
+        player.play()
+        cell.playButton.isHidden = true
+    }
+}
+

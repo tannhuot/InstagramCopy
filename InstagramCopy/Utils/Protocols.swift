@@ -41,3 +41,11 @@ protocol Printable {
 protocol logoutDelegate {
     func didLogout()
 }
+
+protocol MessageInputAccesoryViewDelegate {
+    func handleUploadMessage(message: String)
+    func handleSelectImage()
+}
+protocol ChatCellDelegate {
+    func handlePlayVideo(for cell: ChatCell)
+}

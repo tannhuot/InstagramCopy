@@ -135,7 +135,7 @@ class SignUpVC: UIViewController {
                 
             }
             let fileName = NSUUID().uuidString
-            Storage.storage().reference().child("profile_image").child(fileName).putData(uploadData, metadata: nil, completion: { (metadata, error) in
+            STORAGE_PROFILE_IMAGES_REF.child(fileName).putData(uploadData, metadata: nil, completion: { (metadata, error) in
                 // handle error
                 if let error = error {
                     hideProgressIndicator(view: self.view)
@@ -143,7 +143,7 @@ class SignUpVC: UIViewController {
                 }
                 
                 // profile image url
-                Storage.storage().reference().child("profile_image").child(fileName).downloadURL(completion: { (url, error) in
+                STORAGE_PROFILE_IMAGES_REF.child(fileName).downloadURL(completion: { (url, error) in
                     if let error = error {
                         hideProgressIndicator(view: self.view)
                         print("failed to get image url", error.localizedDescription)

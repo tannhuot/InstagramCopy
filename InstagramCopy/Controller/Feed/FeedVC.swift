@@ -17,6 +17,7 @@ class FeedVC: UICollectionViewController, UICollectionViewDelegateFlowLayout {
     var post: Post?
     var navTitle = ""
     var logoutDelegate: logoutDelegate?
+    var currentKey: String?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,6 +43,14 @@ class FeedVC: UICollectionViewController, UICollectionViewDelegateFlowLayout {
     }
     
     // MARK: UICollectionViewDataSource
+    
+    override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        if posts.count > 4 {
+            if indexPath.item == posts.count - 1 {
+                fetchPosts()
+            }
+        }
+    }
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if viewSinglePost {
@@ -65,6 +74,7 @@ class FeedVC: UICollectionViewController, UICollectionViewDelegateFlowLayout {
     // MARK: - Handlers
     @objc func handleRefresh() {
         posts.removeAll(keepingCapacity: false)
+        currentKey = nil
         fetchPosts()
         collectionView.reloadData()
     }
@@ -122,16 +132,44 @@ class FeedVC: UICollectionViewController, UICollectionViewDelegateFlowLayout {
     
     func fetchPosts() {
         guard let currentUid = Auth.auth().currentUser?.uid else { return }
-        USER_FEED_REF.child(currentUid).observe(.childAdded) { (snapshot) in
-            let postID = snapshot.key
-            Database.fetchPost(with: postID) { (post) in
-                self.posts.append(post)
-                self.posts.sort { (post1, post2) -> Bool in
-                    return post1.creationDate > post2.creationDate
+        
+        if let key = currentKey {
+            USER_FEED_REF.child(currentUid).queryOrderedByKey().queryEnding(atValue: key).queryLimited(toLast: 6).observeSingleEvent(of: .value) { [self](snapshot) in
+                guard let first = snapshot.children.allObjects.first as? DataSnapshot else { return }
+                guard let allObj = snapshot.children.allObjects as? [DataSnapshot] else { return }
+                allObj.forEach { (snapshot) in
+                    let postId = snapshot.key
+                    
+                    if postId != currentKey {
+                        fetchPost(withPostId: postId)
+                    }
                 }
-                self.collectionView.refreshControl?.endRefreshing()
-                self.collectionView.reloadData()
+                
+                currentKey = first.key
             }
+        } else {
+            USER_FEED_REF.child(currentUid).queryLimited(toLast: 5).observeSingleEvent(of: .value) { [self](snapshot) in
+                collectionView.refreshControl?.endRefreshing()
+                
+                guard let first = snapshot.children.allObjects.first as? DataSnapshot else { return }
+                guard let allObj = snapshot.children.allObjects as? [DataSnapshot] else { return }
+                allObj.forEach { (snapshot) in
+                    let postId = snapshot.key
+                    fetchPost(withPostId: postId)
+                }
+                
+                currentKey = first.key
+            }
+        }
+    }
+    
+    func fetchPost(withPostId postId: String) {
+        Database.fetchPost(with: postId) { [self](post) in
+            posts.append(post)
+            posts.sort { (post1, post2) -> Bool in
+                return post1.creationDate > post2.creationDate
+            }
+            collectionView.reloadData()
         }
     }
 }
@@ -144,12 +182,35 @@ extension FeedVC: FeedCellDelegate {
         vc.user = post.user
         navigationController?.pushViewController(vc, animated: true)
     }
+    
     // Option Tapped
     func handleOptionTapped(for cell: FeedCell) {
-        dialogOneButton("", "not yet implement", self) { (_) in
-            print("ok")
+        guard let post = cell.post else { return }
+        
+        let alertController = UIAlertController(title: "Option", message: nil, preferredStyle: .actionSheet)
+        
+        if post.ownerUid == Auth.auth().currentUser?.uid {
+            alertController.addAction(UIAlertAction(title: "Edit Post", style: .default, handler: { (_) in
+                // Handle Edit Post
+            }))
+            
+            alertController.addAction(UIAlertAction(title: "Delete Post", style: .destructive, handler: { [self](_) in
+                // Handle Delete Post
+                post.deletePost()
+                
+                if !viewSinglePost {
+                    handleRefresh()
+                } else {
+                    navigationController?.popViewController(animated: true)
+                }
+            }))
         }
+        
+        alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        
+        present(alertController, animated: true, completion: nil)
     }
+    
     // Like Tapped
     func handleLikeTapped(for cell: FeedCell, isDoubleTab: Bool) {
         guard let post = cell.post else { return }
@@ -184,6 +245,7 @@ extension FeedVC: FeedCellDelegate {
         }
         
     }
+    
     // Comment Tapped
     func handleCommentTapped(for cell: FeedCell) {
         guard let post = cell.post else { return }
@@ -191,6 +253,7 @@ extension FeedVC: FeedCellDelegate {
         vc.post = post
         navigationController?.pushViewController(vc, animated: true)
     }
+    
     // Configure Like button
     func handleConfigureLikeButton(for cell: FeedCell) {
         guard let currentUid = Auth.auth().currentUser?.uid else { return }
@@ -202,6 +265,7 @@ extension FeedVC: FeedCellDelegate {
             }
         }
     }
+    
     // handle likeLabel Tapped
     func handleShowLikes(for cell: FeedCell) {
         guard let post = cell.post else { return }
@@ -211,12 +275,14 @@ extension FeedVC: FeedCellDelegate {
         vc.postID = post.postID
         navigationController?.pushViewController(vc, animated: true)
     }
+    
     // handle message tapped
     func handleMessageTapped(for cell: FeedCell) {
         dialogOneButton("", "not yet implement", self) { (_) in
             print("ok")
         }
     }
+    
     // handle bookmark tapped
     func handleBookMarkTapped(for cell: FeedCell) {
         dialogOneButton("", "not yet implement", self) { (_) in

@@ -106,4 +106,47 @@ class Post {
             }
         }
     }
+    
+    func deletePost() {
+        guard let currentUid = Auth.auth().currentUser?.uid else { return }
+        Storage.storage().reference(forURL: imageUrl).delete(completion: nil)
+        
+        // Delete from follower feed
+        USER_FOLLOWER_REF.child(currentUid).observeSingleEvent(of: .value) { (snapshot) in
+            guard let followers = snapshot.children.allObjects as? [DataSnapshot] else { return }
+
+            followers.forEach { (follower) in
+                USER_POSTS_REF.child(follower.key).child(self.postID).removeValue()
+            }
+        }
+        
+        // Delete from newfeed
+        USER_FEED_REF.child(currentUid).child(postID).removeValue()
+        
+        // Delete from user post
+        USER_POSTS_REF.child(currentUid).child(postID).removeValue()
+        
+        // Delete from post-like, user-like, and notification
+        POST_LIKES_REF.child(postID).observeSingleEvent(of: .value) { [self](snapshot) in
+            guard let postLikes = snapshot.children.allObjects as? [DataSnapshot] else { return }
+
+            postLikes.forEach { (postLike) in
+                USER_LIKES_REF.child(postLike.key).child(self.postID).observeSingleEvent(of: .value) { (snapshot) in
+                    guard let notificationId = snapshot.value as? String else { return }
+                    
+                    NOTIFICATION_REF.child(ownerUid).child(notificationId).removeValue { (_, _) in
+                        POST_LIKES_REF.child(postID).removeValue()
+                        
+                        USER_LIKES_REF.child(postLike.key).child(postID).removeValue()
+                    }
+                }
+            }
+        }
+        
+        // Delete Comment
+        COMMENT_REF.child(postID).removeValue()
+        
+        //
+        POSTS_REF.child(postID).removeValue()
+    }
 }

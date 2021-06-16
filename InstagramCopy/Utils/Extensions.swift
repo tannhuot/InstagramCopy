@@ -77,3 +77,51 @@ extension UIButton {
         }
     }
 }
+
+extension String {
+    func timeAgoSinceDate() -> String {
+            let dateFormatter = DateFormatter()
+            dateFormatter.locale = Locale(identifier: "en_US")
+            dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+            dateFormatter.timeZone = TimeZone(abbreviation: "UTC")
+            var formattedString = self.replacingOccurrences(of: "Z", with: "")
+            if let lowerBound = formattedString.range(of: ".")?.lowerBound {
+                formattedString = "\(formattedString[..<lowerBound])"
+            }
+            
+            guard let date = dateFormatter.date(from: formattedString) else {
+                return self
+            }
+            
+            let fromDate =  date
+            
+            let toDate = Date()
+            
+            // Month
+            if let interval = Calendar.current.dateComponents([.month], from: fromDate, to: toDate).month, interval > 0  {
+                dateFormatter.dateFormat = "dd MMM yyyy"
+                
+                return dateFormatter.string(from: fromDate)
+            }
+            
+            // Day
+            if let interval = Calendar.current.dateComponents([.day], from: fromDate, to: toDate).day, interval > 0  {
+                
+                return interval == 1 ? "\(interval)" + " " + "Day ago" : "\(interval)" + " " + "Days ago"
+            }
+            
+            // Hours
+            if let interval = Calendar.current.dateComponents([.hour], from: fromDate, to: toDate).hour, interval > 0 {
+                
+                return interval == 1 ? "\(interval)" + " " + "Hour ago" : "\(interval)" + " " + "Hours ago"
+            }
+            
+            // Minute
+            if let interval = Calendar.current.dateComponents([.minute], from: fromDate, to: toDate).minute, interval > 0 {
+                
+                return interval == 1 ? "\(interval)" + " " + "Minute ago" : "\(interval)" + " " + "Minutes ago"
+            }
+            
+            return "A moment ago"
+        }
+}

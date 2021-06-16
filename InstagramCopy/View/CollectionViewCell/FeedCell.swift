@@ -27,6 +27,10 @@ class FeedCell: UICollectionViewCell {
             postImageView.loadImage(with: imageUrl)
             likeLabel.text = "\(likes) like"
             configureLikeButton()
+            
+            let formatter = DateFormatter()
+            formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+            postTimeLabel.text = formatter.string(from: post?.creationDate ?? Date()).timeAgoSinceDate()
         }
     }
     
@@ -95,6 +99,7 @@ class FeedCell: UICollectionViewCell {
         btn.setImage(UIImage(named: "ribbon"), for: .normal)
         btn.tintColor = .black
         btn.addTarget(self, action: #selector(handleBookMarkTapped), for: .touchUpInside)
+        btn.isHidden = true
         return btn
     }()
     
@@ -121,7 +126,6 @@ class FeedCell: UICollectionViewCell {
         let lb = UILabel()
         lb.textColor = .lightGray
         lb.font = UIFont.boldSystemFont(ofSize: 10)
-        lb.text = "999 DAYS AGO"
         return lb
     }()
     

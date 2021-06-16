@@ -18,6 +18,7 @@ class FeedVC: UICollectionViewController, UICollectionViewDelegateFlowLayout {
     var navTitle = ""
     var logoutDelegate: logoutDelegate?
     var currentKey: String?
+    var userProfileRefreshClosure: (()->())?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -34,6 +35,7 @@ class FeedVC: UICollectionViewController, UICollectionViewDelegateFlowLayout {
         }
         updateUserFeeds()
     }
+    
     // MARK: UICollectionView FlowLayout
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let width = view.frame.width
@@ -153,6 +155,7 @@ class FeedVC: UICollectionViewController, UICollectionViewDelegateFlowLayout {
                 
                 guard let first = snapshot.children.allObjects.first as? DataSnapshot else { return }
                 guard let allObj = snapshot.children.allObjects as? [DataSnapshot] else { return }
+                
                 allObj.forEach { (snapshot) in
                     let postId = snapshot.key
                     fetchPost(withPostId: postId)
@@ -190,9 +193,9 @@ extension FeedVC: FeedCellDelegate {
         let alertController = UIAlertController(title: "Option", message: nil, preferredStyle: .actionSheet)
         
         if post.ownerUid == Auth.auth().currentUser?.uid {
-            alertController.addAction(UIAlertAction(title: "Edit Post", style: .default, handler: { (_) in
+            /*alertController.addAction(UIAlertAction(title: "Edit Post", style: .default, handler: { (_) in
                 // Handle Edit Post
-            }))
+            }))*/
             
             alertController.addAction(UIAlertAction(title: "Delete Post", style: .destructive, handler: { [self](_) in
                 // Handle Delete Post
@@ -201,8 +204,13 @@ extension FeedVC: FeedCellDelegate {
                 if !viewSinglePost {
                     handleRefresh()
                 } else {
+                    userProfileRefreshClosure?()
                     navigationController?.popViewController(animated: true)
                 }
+            }))
+        } else {
+            alertController.addAction(UIAlertAction(title: "Report", style: .default, handler: { (_) in
+                dialogOneButton("Report", "Post Reported", self) { (_) in }
             }))
         }
         
@@ -278,9 +286,9 @@ extension FeedVC: FeedCellDelegate {
     
     // handle message tapped
     func handleMessageTapped(for cell: FeedCell) {
-        dialogOneButton("", "not yet implement", self) { (_) in
-            print("ok")
-        }
+        let vc = ChatViewController(collectionViewLayout: UICollectionViewFlowLayout())
+        vc.user = cell.post?.user
+        navigationController?.pushViewController(vc, animated: true)
     }
     
     // handle bookmark tapped

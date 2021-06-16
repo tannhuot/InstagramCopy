@@ -16,6 +16,7 @@ class UserProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLay
     var user: User?
     var posts = [Post]()
 
+    // MARK: - Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .white
@@ -25,6 +26,8 @@ class UserProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLay
         collectionView!.register(ProfileHeaderCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: ProfileHeaderReuseIdentifier)
         collectionView.register(PostCell.self, forCellWithReuseIdentifier: PostCell.reuseIndentifier)
         
+        // Refresh Control
+        configureRefreshControl()
         
         fetchPosts()
     }
@@ -39,7 +42,7 @@ class UserProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLay
 
     // MARK: - UICollectionView FlowLayout
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        return CGSize(width: view.frame.width, height: 200)
+        return CGSize(width: view.frame.width, height: 140)//200)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -81,9 +84,25 @@ class UserProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLay
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let vc = FeedVC(collectionViewLayout: UICollectionViewFlowLayout())
         vc.viewSinglePost = true
+        vc.userProfileRefreshClosure = handleRefresh
         vc.post = posts[indexPath.item]
         navigationController?.pushViewController(vc, animated: true)
     }
+    
+    //MARK: - Function
+    func configureRefreshControl() {
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(handleRefresh), for: .valueChanged)
+        collectionView.refreshControl = refreshControl
+    }
+    
+    @objc func handleRefresh() {
+        posts.removeAll(keepingCapacity: false)
+        //currentKey = nil
+        fetchPosts()
+        collectionView.reloadData()
+    }
+    
     //MARK: - API
     func fetchCurrentUserData() {
         guard let currentUid = Auth.auth().currentUser?.uid else { return }
@@ -111,11 +130,13 @@ class UserProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLay
         }
         USER_POSTS_REF.child(uid).observe(.childAdded) { (snapshot) in
             let postID = snapshot.key
+            print(postID)
             Database.fetchPost(with: postID) { (post) in
                 self.posts.append(post)
                 self.posts.sort { (post1, post2) -> Bool in
                     return post1.creationDate > post2.creationDate
                 }
+                self.collectionView.refreshControl?.endRefreshing()
                 self.collectionView.reloadData()
             }
         }

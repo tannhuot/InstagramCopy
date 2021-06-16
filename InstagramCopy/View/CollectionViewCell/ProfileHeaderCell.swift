@@ -209,7 +209,11 @@ class ProfileHeaderCell: UICollectionViewCell {
         editProfileFollowButton.anchor(top: postLabel.bottomAnchor, left: postLabel.leftAnchor, bottom: nil, right: followingLabel.rightAnchor, paddingTop: 10, paddingLeft: 10, paddingBottom: 0, paddingRight: 10, width: 0, height: 35)
         editProfileFollowButton.addTarget(self, action: #selector(handleEditProfileFollowButton), for: .touchUpInside)
         
-        configureBottomToolBar()
+        let bottomDividerView = UIView()
+        bottomDividerView.backgroundColor = .lightGray
+        addSubview(bottomDividerView)
+        bottomDividerView.anchor(top: nameLabel.bottomAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, paddingTop: 4, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 1)
+        //configureBottomToolBar()
     }
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

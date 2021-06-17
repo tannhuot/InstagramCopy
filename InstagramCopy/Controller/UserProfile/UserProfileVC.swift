@@ -166,9 +166,11 @@ extension UserProfileVC: UserProfileHeaderDelegate {
             header.editProfileFollowButton.setTitle("Follow", for: .normal)
             header.user?.unfollow()
         }else{
-            dialogOneButton("", "not yet implement", self) { (_) in
-                print("ok")
-            }
+            let vc = EditProfileVC()
+            vc.user = user
+            let navVC = UINavigationController(rootViewController: vc)
+            fullScreen(viewController: navVC)
+            present(navVC, animated: true, completion: nil)
         }
     }
     func handleListTapped(for header: ProfileHeaderCell) {

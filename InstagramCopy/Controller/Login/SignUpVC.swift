@@ -18,7 +18,7 @@ class SignUpVC: UIViewController {
     
     let profilePhotoBtn: UIButton = {
        let btn = UIButton(type: .system)
-        btn.setImage(#imageLiteral(resourceName: "plus_photo"), for: .normal)
+        btn.setImage(UIImage(named: "plus_photo"), for: .normal)
         btn.addTarget(self, action: #selector(handlSelectProfilePhoto), for: .touchUpInside)
         return btn
     }()
